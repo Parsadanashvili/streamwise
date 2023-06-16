@@ -8,7 +8,7 @@ interface NavLinkProps extends LinkProps {
 const NavLink: FC<NavLinkProps> = ({ children, ...props }) => {
   return (
     <Link
-      className="text-base font-normal text-white-500 hover:text-white-400 transition-colors duration-[120ms] case-on"
+      className="text-base font-normal text-white hover:text-white-400 transition-colors duration-[120ms] case-on"
       {...props}
     >
       {children}

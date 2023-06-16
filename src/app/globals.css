@@ -5,3 +5,7 @@
 .case-on {
   font-feature-settings: "case" on;
 }
+
+.header-mask-image::before {
+  mask-image: linear-gradient(to bottom, black 91px, transparent);
+}

@@ -14,9 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${helvetica.variable} font-sans antialiased bg-black-500`}
-      >
+      <body className={`${helvetica.variable} font-sans antialiased bg-black`}>
         <Header />
         {children}
       </body>

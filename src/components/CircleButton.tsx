@@ -6,12 +6,12 @@ const defaultStyles = [
   "items-center",
   "justify-center",
   "py-3",
-  "px-6",
-  "gap-3",
+  "px-3",
+  "w-[42px]",
+  "h-[42px]",
   "text-base",
   "font-normal",
   "leading-[18px]",
-  "case-on",
   "rounded-full",
   "duration-[120ms]",
 ];
@@ -46,12 +46,16 @@ const childrenStyles = {
   outline: ["text-white-400"].join(" "),
 };
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface CircleButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: keyof typeof buttonStyles;
   children: ReactNode;
 }
 
-const Button: FC<ButtonProps> = ({ children, variant = "fill", ...props }) => {
+const CircleButton: FC<CircleButtonProps> = ({
+  children,
+  variant = "fill",
+  ...props
+}) => {
   if (!variant) {
     variant = "fill";
   }
@@ -63,4 +67,4 @@ const Button: FC<ButtonProps> = ({ children, variant = "fill", ...props }) => {
   );
 };
 
-export default Button;
+export default CircleButton;
