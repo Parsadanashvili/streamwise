@@ -2,6 +2,7 @@ import Button from "@/components/Button";
 import CircleButton from "@/components/CircleButton";
 import Container from "@/components/Container";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
 const Slider = () => {
@@ -19,7 +20,7 @@ const Slider = () => {
         />
 
         <div className="absolute z-50 w-full h-full">
-          <div className="absolute bottom-0 left-0 w-full pb-[207px]">
+          <div className="absolute bottom-0 left-0 w-full pb-[263px]">
             <Container>
               <div className="flex items-end justify-between">
                 <div className="flex flex-col gap-4 text-white">
@@ -45,7 +46,7 @@ const Slider = () => {
                     მყრალა თხრობა
                   </div>
                   <div className="flex items-center">
-                    <Button>უყურე ახლავე</Button>
+                    <Button startIcon={PlayIcon}>უყურე ახლავე</Button>
                   </div>
                 </div>
 
@@ -61,7 +62,7 @@ const Slider = () => {
             </Container>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-gradient-to-t from-black to-transparent z-10"></div>
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-slider-gradient z-10 pointer-events-none"></div>
       </div>
     </div>
   );

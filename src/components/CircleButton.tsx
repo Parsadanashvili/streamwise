@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, FC, ReactNode } from "react";
 
-const defaultStyles = [
+const baseStyles = [
   "box-border",
   "flex",
   "items-center",
@@ -18,13 +18,13 @@ const defaultStyles = [
 
 const buttonStyles = {
   fill: [
-    ...defaultStyles,
+    ...baseStyles,
     "bg-primary",
     "hover:shadow-[0px_1px_40px_rgba(92,100,255,0.3)]",
     "transition-shadow",
   ].join(" "),
   outline: [
-    ...defaultStyles,
+    ...baseStyles,
     "py-[11px]",
     "bg-[rgba(255,255,255,0.05)]",
     "border",

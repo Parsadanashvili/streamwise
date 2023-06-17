@@ -7,8 +7,8 @@ import Button from "./Button";
 const headerBlurStyles = [
   "after:absolute",
   "before:absolute",
-  "after:inset-[-1px_0px_-50%]",
-  "before:inset-[-1px_0px_-50%]",
+  "after:inset-[-1px_0px_-26px]",
+  "before:inset-[-1px_0px_-26px]",
   "after:pointer-events-none",
   "before:pointer-events-none",
   "after:user-select-none",
@@ -37,8 +37,10 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-8">
-            <NavLink href={"/"}>ავტორიზაცია</NavLink>
-            <Button>რეგისტრაცია</Button>
+            <NavLink href={"/login"}>ავტორიზაცია</NavLink>
+            <Link href={"/signup"}>
+              <Button>რეგისტრაცია</Button>
+            </Link>
           </div>
         </div>
       </Container>

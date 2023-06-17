@@ -1,6 +1,6 @@
-import { ButtonHTMLAttributes, FC, ReactNode } from "react";
+import { ButtonHTMLAttributes, ElementType, FC, ReactNode } from "react";
 
-const defaultStyles = [
+const baseStyles = [
   "box-border",
   "flex",
   "items-center",
@@ -18,13 +18,13 @@ const defaultStyles = [
 
 const buttonStyles = {
   fill: [
-    ...defaultStyles,
+    ...baseStyles,
     "bg-primary",
     "hover:shadow-[0px_1px_40px_rgba(92,100,255,0.3)]",
     "transition-shadow",
   ].join(" "),
   outline: [
-    ...defaultStyles,
+    ...baseStyles,
     "py-[11px]",
     "bg-[rgba(255,255,255,0.05)]",
     "border",
@@ -49,16 +49,41 @@ const childrenStyles = {
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: keyof typeof buttonStyles;
   children: ReactNode;
+  startIcon?: ElementType;
+  endIcon?: ElementType;
 }
 
-const Button: FC<ButtonProps> = ({ children, variant = "fill", ...props }) => {
+const Button: FC<ButtonProps> = ({
+  children,
+  className,
+  startIcon,
+  endIcon,
+  variant = "fill",
+  ...props
+}) => {
   if (!variant) {
     variant = "fill";
   }
 
+  const StartIcon = startIcon;
+  const EndIcon = endIcon;
+
   return (
-    <button className={buttonStyles[variant]} {...props}>
+    <button
+      className={`${buttonStyles[variant]} ${className ?? ""}`}
+      {...props}
+    >
+      {StartIcon && (
+        <div className="flex items-center">
+          {<StartIcon className={"w-[18px] h-[18px]"} />}
+        </div>
+      )}
       <div className={childrenStyles[variant]}>{children}</div>
+      {EndIcon && (
+        <div className="flex items-center">
+          {<EndIcon className={"w-[18px] h-[18px]"} />}
+        </div>
+      )}
     </button>
   );
 };

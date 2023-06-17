@@ -1,6 +1,5 @@
 import { helvetica } from "@/styles/fonts";
 import "./globals.css";
-import Header from "@/components/Header";
 
 export const metadata = {
   title: "Streamwise",
@@ -15,7 +14,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${helvetica.variable} font-sans antialiased bg-black`}>
-        <Header />
         {children}
       </body>
     </html>

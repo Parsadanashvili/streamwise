@@ -77,6 +77,9 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-helvetica)", ...fontFamily.sans],
       },
+      transitionTimingFunction: {
+        "in-out-input": "cubic-bezier(0.49, 0, 0.49, 1)",
+      },
     },
   },
   plugins: [],
