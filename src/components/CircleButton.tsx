@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, FC, ReactNode } from "react";
+import { ButtonHTMLAttributes, ElementType, FC } from "react";
 
 const baseStyles = [
   "box-border",
@@ -48,11 +48,12 @@ const childrenStyles = {
 
 interface CircleButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: keyof typeof buttonStyles;
-  children: ReactNode;
+  icon: ElementType;
 }
 
 const CircleButton: FC<CircleButtonProps> = ({
-  children,
+  icon,
+  className,
   variant = "fill",
   ...props
 }) => {
@@ -60,9 +61,13 @@ const CircleButton: FC<CircleButtonProps> = ({
     variant = "fill";
   }
 
+  const Icon = icon;
+
   return (
     <button className={buttonStyles[variant]} {...props}>
-      <div className={childrenStyles[variant]}>{children}</div>
+      <div className={childrenStyles[variant]}>
+        <Icon className={"w-[18px] h-[18px]"} />
+      </div>
     </button>
   );
 };

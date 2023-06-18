@@ -7,7 +7,7 @@ import Image from "next/image";
 
 const Slider = () => {
   return (
-    <div className="relative w-full h-screen bg-error">
+    <div className="relative w-full h-screen bg-primary">
       <div className="absolute top-0 left-0 right-0 bottom-0 z-20">
         <Image
           width={1920}
@@ -51,12 +51,8 @@ const Slider = () => {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <CircleButton variant="outline">
-                    <ChevronRightIcon className="w-[18px] h-[18px]" />
-                  </CircleButton>
-                  <CircleButton variant="outline">
-                    <ChevronLeftIcon className="w-[18px] h-[18px]" />
-                  </CircleButton>
+                  <CircleButton variant="outline" icon={ChevronRightIcon} />
+                  <CircleButton variant="outline" icon={ChevronLeftIcon} />
                 </div>
               </div>
             </Container>

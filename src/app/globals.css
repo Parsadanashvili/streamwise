@@ -28,3 +28,21 @@
     ),
     #0c0c0c;
 }
+
+.bg-input-success {
+  background: linear-gradient(
+      0deg,
+      rgba(41, 255, 110, 0.05),
+      rgba(41, 255, 110, 0.05)
+    ),
+    rgba(255, 255, 255, 0.05);
+}
+
+.bg-input-error {
+  background: linear-gradient(
+      0deg,
+      rgba(255, 77, 73, 0.05),
+      rgba(255, 77, 73, 0.05)
+    ),
+    rgba(255, 255, 255, 0.05);
+}

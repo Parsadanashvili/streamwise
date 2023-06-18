@@ -20,9 +20,7 @@ const MovieCard: FC<MovieCardProps> = ({ title, short_description, image }) => {
       <div className="absolute bottom-0 left-0 right-0 text-white duration-300 transition-[width]">
         <div className="flex flex-col gap-5 p-5 bg-[rgba(12, 12, 12, 0.1)] backdrop-blur-[30px] rounded-t-3xl">
           <div className="flex items-center gap-3 font-medium text-base leading-[18px]">
-            <CircleButton variant="outline">
-              <PlayIcon className="text-white w-[18px] h-[18px]" />
-            </CircleButton>
+            <CircleButton variant="outline" icon={PlayIcon} />
 
             <div className="flex flex-col gap-1 overflow-hidden">
               <div className="font-medium text-sm leading-[18px] overflow-hidden whitespace-nowrap text-ellipsis">
