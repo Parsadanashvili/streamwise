@@ -49,6 +49,12 @@ const styles = {
         "focus:border-[rgba(255,77,73,0.6)]",
       ],
     },
+
+    entered: {
+      default: [],
+      true: ["entered"],
+      false: [],
+    },
   },
 
   placeholder: {
@@ -99,25 +105,18 @@ const Input: FC<InputProps> = ({
   const { input: inputStyles, placeholder: placeholderStyles } = useStyles({
     props: {
       color,
+      entered: isEntered,
     },
     styles: styles as any,
   });
 
   useEffect(() => {
-    if (inputRef.current?.value.length || value) {
+    if (value?.toString().length) {
       setIsEntered(true);
     } else {
       setIsEntered(false);
     }
   }, [value]);
-
-  useEffect(() => {
-    if (isEntered || value) {
-      inputRef.current?.classList.add("entered");
-    } else {
-      inputRef.current?.classList.remove("entered");
-    }
-  }, [value, isEntered]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 0) {

@@ -8,6 +8,7 @@ import DiscordIcon from "@/icons/DiscordIcon";
 import FacebookIcon from "@/icons/FacebookIcon";
 import GoogleIcon from "@/icons/GoogleIcon";
 import Link from "next/link";
+import LoginForm from "./components/LoginForm";
 
 const Login = () => {
   return (
@@ -22,23 +23,7 @@ const Login = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <InputStack>
-          <Input placeholder="ელ-ფოსტა" />
-          <Input type="password" placeholder="პაროლი" />
-        </InputStack>
-
-        <div className="text-end">
-          <Link
-            href={"/forgot-password"}
-            className=" text-white text-sm leading-[18px] font-light"
-          >
-            პაროლის აღდგენა
-          </Link>
-        </div>
-      </div>
-
-      <Button className="w-full">გაგრძელება</Button>
+      <LoginForm />
 
       <Divider>ან</Divider>
 

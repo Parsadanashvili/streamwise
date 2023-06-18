@@ -8,6 +8,7 @@ import DiscordIcon from "@/icons/DiscordIcon";
 import FacebookIcon from "@/icons/FacebookIcon";
 import GoogleIcon from "@/icons/GoogleIcon";
 import Link from "next/link";
+import SignupForm from "./components/SignupForm";
 
 const SignUp = () => {
   return (
@@ -22,15 +23,7 @@ const SignUp = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <InputStack>
-          <Input placeholder="მომხმარებლის სახელი" />
-          <Input placeholder="ელ-ფოსტა" />
-          <Input type="password" placeholder="პაროლი" />
-        </InputStack>
-      </div>
-
-      <Button className="w-full">გაგრძელება</Button>
+      <SignupForm />
 
       <Divider>ან</Divider>
 
