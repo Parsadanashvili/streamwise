@@ -23,7 +23,7 @@ export default async function RootLayout({
     accessToken = cookie.value;
   }
 
-  const res = await getMe(accessToken);
+  const { res } = await getMe(accessToken);
 
   return (
     <html lang="en">

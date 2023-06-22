@@ -5,24 +5,54 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import InputStack from "@/components/InputStack";
 import { signup } from "@/hooks/useAuth";
-import { FormEvent, useEffect, useState } from "react";
+import { useForm } from "@/hooks/useForm";
+import { useEffect, useState } from "react";
+
+type FormValues = {
+  username: string;
+  email: string;
+  password: string;
+};
 
 const SignupForm = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>();
 
-  const [error, setError] = useState<string | undefined>();
+  const {
+    formState: { errors },
+    handleSubmit,
+    setError,
+    register,
+    watch,
+  } = useForm<FormValues>({
+    shouldFocusError: true,
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const username = watch("username");
 
-    if (usernameAvailable) {
-      signup({
-        username,
-        email,
-        password,
+  const handleSignup = async (data: FormValues) => {
+    if (usernameAvailable === false) {
+      setError("username", {
+        message: "მომხმარებელის სახელი დაკავებულია",
+      });
+      return;
+    }
+
+    const { ok, error } = await signup(data);
+
+    if (!ok) {
+      setUsernameAvailable(undefined);
+
+      const keys = Object.keys(error);
+
+      keys.forEach((key) => {
+        setError(key as any, {
+          message: error[key],
+        });
       });
     }
   };
@@ -30,64 +60,78 @@ const SignupForm = () => {
   useEffect(() => {
     const timeout = setTimeout(async () => {
       if (username.length > 3) {
-        const res = await checkUsername(username);
-
-        setUsernameAvailable(res.data.available);
+        const { res } = await checkUsername(username);
 
         if (!res.data.available) {
-          setError("მომხმარებელის სახელი დაკავებულია");
+          setError("username", {
+            type: "onChange",
+            message: "მომხმარებელის სახელი დაკავებულია",
+          });
+
+          setUsernameAvailable(false);
         } else {
-          setError(undefined);
+          setUsernameAvailable(true);
         }
       } else {
         setUsernameAvailable(undefined);
-        setError(undefined);
       }
     }, 600);
 
     return () => clearTimeout(timeout);
-  }, [username]);
+  }, [username, setError]);
+
+  const usernameHasError =
+    usernameAvailable === undefined && !errors.username?.message
+      ? undefined
+      : !usernameAvailable || !!errors.username?.message;
 
   return (
-    <form className="flex flex-col items-center gap-6" onSubmit={handleSubmit}>
+    <form
+      className="flex flex-col items-center gap-6"
+      onSubmit={handleSubmit(handleSignup)}
+    >
       <div className="w-full flex flex-col gap-3">
         <InputStack>
           <Input
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
             color={
-              usernameAvailable === true
+              usernameHasError == undefined
+                ? undefined
+                : usernameHasError === false
                 ? "success"
-                : usernameAvailable === false
-                ? "error"
-                : undefined
+                : "error"
             }
-            value={username}
             placeholder="მომხმარებლის სახელი"
+            {...register("username", {
+              required: true,
+              minLength: 4,
+              maxLength: 20,
+            })}
+            autoComplete="off"
           />
           <Input
             type="email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-            value={email}
             placeholder="ელ-ფოსტა"
+            {...register("email", {
+              required: true,
+            })}
+            color={!!errors.email?.message ? "error" : undefined}
+            autoComplete="email"
+            autoCorrect="email"
           />
           <Input
             type="password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            value={password}
             placeholder="პაროლი"
+            {...register("password", {
+              required: true,
+            })}
+            color={!!errors.password?.message ? "error" : undefined}
+            error={
+              errors?.username?.message ??
+              errors?.email?.message ??
+              errors.password?.message
+            }
           />
         </InputStack>
-        {error && (
-          <div className="text-error text-sm leading-[18px] font-light">
-            {error}
-          </div>
-        )}
       </div>
 
       <Button className="w-full">გაგრძელება</Button>

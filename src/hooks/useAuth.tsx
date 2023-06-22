@@ -57,7 +57,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ value, children }) => {
       if (token) {
         setIsLoading(true);
 
-        const res = await getMe("");
+        const { res } = await getMe(token);
 
         setIsLoading(false);
 
@@ -102,15 +102,17 @@ export const login = async ({
   redirectTo?: string;
 }) => {
   try {
-    const res = await wiseApi.post("/auth/token", credentials);
+    const { res, ok } = await wiseApi.post("/auth/token", credentials);
 
-    if (res.data != null) {
-      Cookies.set("accessToken", res.data.token);
-
-      await _AUTH_._getSession();
-
-      window.location.href = redirectTo ?? "/";
+    if (!ok) {
+      throw new Error(res.error);
     }
+
+    Cookies.set("accessToken", res.data.token);
+
+    await _AUTH_._getSession();
+
+    window.location.href = redirectTo ?? "/";
 
     return {
       ok: true,
@@ -118,7 +120,7 @@ export const login = async ({
   } catch (err: any) {
     return {
       ok: false,
-      error: err.response.data.error,
+      error: err.message,
     };
   }
 };
@@ -129,15 +131,17 @@ export const signup = async (data: {
   password: string;
 }) => {
   try {
-    const res = await wiseApi.post("/auth/signup", data);
+    const { res, ok } = await wiseApi.post("/auth/signup", data);
 
-    if (res.data != null) {
-      Cookies.set("accessToken", res.data.token);
-
-      await _AUTH_._getSession();
-
-      window.location.href = "/";
+    if (!ok) {
+      throw res.errors;
     }
+
+    Cookies.set("accessToken", res.data.token);
+
+    await _AUTH_._getSession();
+
+    window.location.href = "/";
 
     return {
       ok: true,
@@ -145,7 +149,7 @@ export const signup = async (data: {
   } catch (err: any) {
     return {
       ok: false,
-      error: err.response.data.error,
+      error: err,
     };
   }
 };

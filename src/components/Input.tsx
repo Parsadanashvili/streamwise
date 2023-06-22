@@ -1,7 +1,14 @@
 "use client";
 
 import useStyles from "@/hooks/useStyles";
-import { FC, useEffect, useRef, useState } from "react";
+import {
+  FC,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 const styles = {
   input: {
@@ -46,6 +53,7 @@ const styles = {
         "shadow-none",
         "bg-input-error",
         "border-[rgba(255,77,73,0.6)]",
+        "border-t",
         "focus:border-[rgba(255,77,73,0.6)]",
       ],
     },
@@ -89,60 +97,68 @@ const styles = {
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   color?: "success" | "error";
+  error?: string;
 }
 
-const Input: FC<InputProps> = ({
-  placeholder,
-  className,
-  value,
-  color,
-  onChange,
-  ...props
-}) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [isEntered, setIsEntered] = useState(false);
+const Input: FC<InputProps> = forwardRef(
+  (
+    { placeholder, className, value, color, error, onChange, ...props },
+    ref
+  ) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [isEntered, setIsEntered] = useState(false);
 
-  const { input: inputStyles, placeholder: placeholderStyles } = useStyles({
-    props: {
-      color,
-      entered: isEntered,
-    },
-    styles: styles as any,
-  });
+    useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-  useEffect(() => {
-    if (value?.toString().length) {
-      setIsEntered(true);
-    } else {
-      setIsEntered(false);
-    }
-  }, [value]);
+    const { input: inputStyles, placeholder: placeholderStyles } = useStyles({
+      props: {
+        color,
+        entered: isEntered,
+      },
+      styles: styles as any,
+    });
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.length > 0) {
-      setIsEntered(true);
-    } else {
-      setIsEntered(false);
-    }
+    useEffect(() => {
+      if (value?.toString().length) {
+        setIsEntered(true);
+      } else {
+        setIsEntered(false);
+      }
+    }, [value]);
 
-    onChange?.(event);
-  };
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.value.length > 0) {
+        setIsEntered(true);
+      } else {
+        setIsEntered(false);
+      }
 
-  return (
-    <div className="relative m-0 border-none w-full h-14">
-      <input
-        ref={inputRef}
-        className={`${inputStyles.join(" ")} ${className ?? ""}`}
-        type="text"
-        onChange={handleInputChange}
-        value={value}
-        {...props}
-      />
-      {placeholder && (
-        <span className={placeholderStyles.join(" ")}>{placeholder}</span>
-      )}
-    </div>
-  );
-};
+      onChange?.(event);
+    };
+
+    return (
+      <div className="relative m-0 border-none w-full">
+        <input
+          ref={inputRef}
+          className={`${inputStyles.join(" ")} ${className ?? ""}`}
+          type="text"
+          onChange={handleInputChange}
+          value={value}
+          {...props}
+        />
+        {placeholder && (
+          <span className={placeholderStyles.join(" ")}>{placeholder}</span>
+        )}
+        {error && (
+          <span className="text-xs leading-[14px] text-error font-light ml-4 mt-2">
+            {error}
+          </span>
+        )}
+      </div>
+    );
+  }
+);
+
+Input.displayName = "Input";
 
 export default Input;

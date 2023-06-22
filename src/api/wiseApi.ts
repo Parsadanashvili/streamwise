@@ -5,8 +5,6 @@ export const defaultHeaders = {
 
 const baseUrl = process.env.API_BASE_URL || "";
 
-type Headers = Record<string, string>;
-
 type Query = Record<string, string>;
 
 const get = async (url: string, query?: Query, options?: RequestInit) => {
@@ -23,7 +21,12 @@ const get = async (url: string, query?: Query, options?: RequestInit) => {
       ...options,
     }
   );
-  return response.json();
+
+  return {
+    ok: response.ok,
+    status: response.status,
+    res: await response.json(),
+  };
 };
 
 const post = async (url: string, body?: any, options?: RequestInit) => {
@@ -38,7 +41,12 @@ const post = async (url: string, body?: any, options?: RequestInit) => {
     },
     ...options,
   });
-  return response.json();
+
+  return {
+    ok: response.ok,
+    status: response.status,
+    res: await response.json(),
+  };
 };
 
 const wiseApi = {

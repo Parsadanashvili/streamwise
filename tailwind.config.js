@@ -80,6 +80,49 @@ module.exports = {
       transitionTimingFunction: {
         "in-out-input": "cubic-bezier(0.49, 0, 0.49, 1)",
       },
+      keyframes: {
+        fadeOut: {
+          "0%": {
+            opacity: 1,
+            visibility: "visible",
+          },
+          "100%": {
+            opacity: 0,
+            visibility: "hidden",
+          },
+        },
+
+        fadeIn: {
+          "0%": {
+            opacity: 0,
+            visibility: "hidden",
+          },
+          "100%": {
+            opacity: 1,
+            visibility: "visible",
+          },
+        },
+
+        mainSliderInfoFadeUp: {
+          "0%": {
+            opacity: 0,
+            transform: "translateY(20px)",
+          },
+          "40%": {
+            opacity: 0,
+            transform: "translateY(20px)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateY(0)",
+          },
+        },
+      },
+      animation: {
+        fadeOut: "fadeOut 600ms ease-in-out",
+        fadeIn: "fadeIn 600ms ease-in-out",
+        mainSliderInfoFadeUp: "mainSliderInfoFadeUp 800ms ease-in-out",
+      },
     },
   },
   plugins: [],

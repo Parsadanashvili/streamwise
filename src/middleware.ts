@@ -13,9 +13,9 @@ export async function middleware(request: NextRequest) {
 
     if (cookie) {
       try {
-        const res = await getMe(cookie);
+        const { ok } = await getMe(cookie);
 
-        if (res.data) {
+        if (ok) {
           throw new Error("Already logged in");
         }
       } catch {

@@ -10,7 +10,9 @@ export const getMe = async (accessToken: string) => {
     });
   } catch (err) {
     return {
-      data: null,
+      ok: false,
+      status: null,
+      res: null,
     };
   }
 };
@@ -19,6 +21,10 @@ export const checkUsername = async (username: string) => {
   try {
     return await wiseApi.post("/check-username", { username });
   } catch (err) {
-    //
+    return {
+      ok: false,
+      status: null,
+      res: null,
+    };
   }
 };
