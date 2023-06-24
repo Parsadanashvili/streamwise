@@ -1,23 +1,28 @@
-import Image from "next/image";
 import CircleButton from "./CircleButton";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import { FC } from "react";
+import MoviePoster from "./MoviePoster";
 
 interface MovieCardProps {
   title: string;
   short_description: string;
   image: string;
+  genres?: { id: number; name: { ka: string } }[];
+  blurhash?: string;
 }
 
-const MovieCard: FC<MovieCardProps> = ({ title, short_description, image }) => {
+const MovieCard: FC<MovieCardProps> = ({
+  title,
+  short_description,
+  image,
+  genres,
+  blurhash,
+}) => {
   return (
-    <div className="group relative bg-black overflow-hidden rounded-3xl cursor-pointer">
-      <div className="relative w-full select-none">
-        <div className="absolute top-0 right-0 bottom-0 left-0 bg-black opacity-5" />
-        <Image width={300} height={431} src={image} alt="movie-poster" />
-      </div>
+    <div className="group relative bg-black overflow-hidden rounded-3xl cursor-pointer h-[430px]">
+      <MoviePoster image={image} blurhash={blurhash} />
 
-      <div className="absolute bottom-0 left-0 right-0 text-white duration-300 transition-[width]">
+      <div className="absolute bottom-0 left-0 right-0 text-white duration-300 transition-[width] z-30">
         <div className="flex flex-col gap-5 p-5 bg-[rgba(12, 12, 12, 0.1)] backdrop-blur-[30px] rounded-t-3xl">
           <div className="flex items-center gap-3 font-medium text-base leading-[18px]">
             <CircleButton variant="outline" icon={PlayIcon} />
@@ -28,14 +33,14 @@ const MovieCard: FC<MovieCardProps> = ({ title, short_description, image }) => {
               </div>
 
               <div className="font-medium text-xs leading-[14px] text-white-300">
-                დრამა / ვესტერნი
+                {genres?.map((genre) => genre.name.ka).join(" / ")}
               </div>
             </div>
           </div>
 
           <div className="space-x-2 hidden group-hover:block">
             <div className="text-[13px] leading-4 font-medium">
-              {short_description}
+              {short_description?.trim()?.slice(0, 130) + "..."}
             </div>
           </div>
         </div>

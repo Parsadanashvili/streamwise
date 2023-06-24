@@ -103,6 +103,17 @@ module.exports = {
           },
         },
 
+        moviecardFadeIn: {
+          "0%": {
+            opacity: 0,
+            visibility: "hidden",
+          },
+          "100%": {
+            opacity: 1,
+            visibility: "visible",
+          },
+        },
+
         mainSliderInfoFadeUp: {
           "0%": {
             opacity: 0,
@@ -121,6 +132,7 @@ module.exports = {
       animation: {
         fadeOut: "fadeOut 600ms ease-in-out",
         fadeIn: "fadeIn 600ms ease-in-out",
+        moviecardFadeIn: "moviecardFadeIn 600ms ease-in-out",
         mainSliderInfoFadeUp: "mainSliderInfoFadeUp 800ms ease-in-out",
       },
     },

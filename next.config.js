@@ -4,7 +4,7 @@ const nextConfig = {
     API_BASE_URL: process.env.API_BASE_URL,
   },
   images: {
-    domains: ["www.figma.com"],
+    domains: ["www.figma.com", "localhost"],
   },
 };
 

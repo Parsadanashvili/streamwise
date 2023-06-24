@@ -38,8 +38,8 @@ const Header = () => {
             </Link>
 
             <div className="hidden md:flex items-center gap-8">
-              <NavLink href={"/movies"}>ფილმები</NavLink>
-              <NavLink href={"/series"}>სერიალები</NavLink>
+              <NavLink href={"/browse/movies"}>ფილმები</NavLink>
+              <NavLink href={"/browse/series"}>სერიალები</NavLink>
               <NavLink href={"/collections"}>კოლექციები</NavLink>
             </div>
           </div>

@@ -7,7 +7,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { set } from "react-hook-form";
 
 const slides = [
   {
@@ -45,7 +44,6 @@ const Slider = () => {
     currentSlide === 0 && !firstLoad
       ? null
       : slides[currentSlide === 0 ? slides.length - 1 : currentSlide - 1];
-  // slides[currentSlide === slides.length - 1 ? 0 : currentSlide + 1];
 
   const handleNextSlide = () => {
     if (buttonsDisabled) {

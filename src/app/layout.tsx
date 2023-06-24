@@ -28,7 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${helvetica.variable} font-sans antialiased bg-black`}>
-        <AuthProvider value={res.data ?? null}>{children}</AuthProvider>
+        <AuthProvider value={res?.data ?? null}>{children}</AuthProvider>
       </body>
     </html>
   );

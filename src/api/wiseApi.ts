@@ -11,7 +11,7 @@ const get = async (url: string, query?: Query, options?: RequestInit) => {
   const { headers } = options || {};
 
   const response = await fetch(
-    `${baseUrl}${url}` + new URLSearchParams(query),
+    `${baseUrl}${url}?` + new URLSearchParams(query),
     {
       method: "GET",
       headers: {
