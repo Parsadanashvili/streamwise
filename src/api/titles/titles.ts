@@ -1,11 +1,11 @@
 import wiseApi from "../wiseApi";
 
-export const getMovies = async () => {
+export const getMovies = async (type = "movie") => {
   try {
     return await wiseApi.get(
       "/titles",
       {
-        type: "movie",
+        type,
       },
       {
         cache: "no-cache",

@@ -2,9 +2,22 @@ import { getMovies } from "@/api/titles/titles";
 import Section from "../../components/Section";
 import MovieCard from "@/components/MovieCard";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
-const MoviesPage = async () => {
-  const { res, ok } = await getMovies();
+interface BrowsePageProps {
+  params: {
+    type: string;
+  };
+}
+
+const BrowsePage = async ({ params }: BrowsePageProps) => {
+  const { type } = params;
+
+  if (type !== "movies" && type !== "series") {
+    notFound();
+  }
+
+  const { res, ok } = await getMovies(type === "movies" ? "movie" : "series");
 
   return (
     <div className="mt-[120px]">
@@ -27,4 +40,4 @@ const MoviesPage = async () => {
   );
 };
 
-export default MoviesPage;
+export default BrowsePage;
