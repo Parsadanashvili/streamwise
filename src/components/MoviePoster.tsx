@@ -20,9 +20,10 @@ const MoviePoster: FC<MoviePosterProps> = ({ blurhash, image }) => {
         src={image}
         loading="lazy"
         alt="movie-poster"
-        className="opacity-0 !absolute top-0 right-0 bottom-0 left-0 z-10 w-full h-full object-cover"
+        className="bg-white-100 animate-pulse !absolute top-0 right-0 bottom-0 left-0 z-10 w-full h-full object-cover"
         onLoadingComplete={(e) => {
-          e.classList.remove("opacity-0");
+          e.classList.remove("bg-white-100");
+          e.classList.remove("animate-pulse");
           e.classList.add("animate-fadeIn");
         }}
       />

@@ -4,7 +4,16 @@ const nextConfig = {
     API_BASE_URL: process.env.API_BASE_URL,
   },
   images: {
-    domains: ["www.figma.com", "localhost"],
+    formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/**",
+      },
+    ],
+    domains: ["www.figma.com"],
   },
 };
 

@@ -1,16 +1,12 @@
 import MovieCard from "@/components/MovieCard";
 import Slider from "./components/Slider";
 import Section from "./components/Section";
+import { getCollections } from "@/api/collections/collections";
+import Link from "next/link";
 
-const movie = {
-  title: "სპაიდერმენი: სახლისკენ გზა არ არის",
-  short_description:
-    "ყველას და საკუთარი თავის გასაკვირად, პო, ჭარბწონიანი, მოუხერხებელი პანდა, მშვიდობის ველის მფარველად აირჩიეს. მალე მას საკუთარი შესაძლებლობების გამოცდა მოუწევს, როდესაც ხეობას მტერი მიუახლოვდება.",
-  image:
-    "https://www.figma.com/file/33eljP2axeR66ojX7TdAC4/image/d1fa31158d2c1de13121a04942fe86f1f4493eb1?fuid=1086042922435748998",
-};
+export default async function Home() {
+  const { res } = await getCollections();
 
-export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
       <Slider />
@@ -24,9 +20,25 @@ export default function Home() {
             <div className="w-full h-[205px] bg-error rounded-3xl"></div>
           </div>
         </Section>
-        <Section title="სუპერგმირები">
+        {res.data.map((collection: any) => (
+          <Section key={collection.id} title={collection.name.ka}>
+            <div className="grid grid-cols-6 items-center gap-7">
+              {collection.titles.map((title: any) => (
+                <Link href={`/titles/${title.id}`} key={title.id}>
+                  <MovieCard
+                    title={title.name.ka}
+                    short_description={title.plots.ka}
+                    genres={title.genres}
+                    image={title.posters[0]}
+                    blurhash={title.posters.blurhash}
+                  />
+                </Link>
+              ))}
+            </div>
+          </Section>
+        ))}
+        {/* <Section title="სუპერგმირები">
           <div className="grid grid-cols-6 items-center gap-7">
-            <MovieCard {...movie} />
             <MovieCard {...movie} />
             <MovieCard {...movie} />
             <MovieCard {...movie} />
@@ -43,7 +55,7 @@ export default function Home() {
             <MovieCard {...movie} />
             <MovieCard {...movie} />
           </div>
-        </Section>
+        </Section> */}
       </div>
     </main>
   );
