@@ -24,7 +24,7 @@ const MovieCard: FC<MovieCardProps> = ({
       <MoviePoster image={image} blurhash={blurhash} />
 
       <div className="absolute bottom-0 left-0 right-0 text-white duration-300 transition-[width] z-30">
-        <div className="flex flex-col gap-5 p-5 bg-[rgba(12, 12, 12, 0.1)] backdrop-blur-[30px] rounded-t-3xl">
+        <div className="flex flex-col gap-5 p-5 bg-[rgba(12, 12, 12, 0.1)] backdrop-blur-[30px] rounded-t-3xl animate-fadeIn">
           <div className="flex items-center gap-3 font-medium text-base leading-[18px]">
             <CircleButton variant="outline" icon={PlayIcon} />
 

@@ -10,6 +10,7 @@ export interface User {
 export interface Collection {
   id: number;
   name: Languagable<string>;
+  slug: string;
   description: Languagable<string> | null;
   titles?: Title[];
 }

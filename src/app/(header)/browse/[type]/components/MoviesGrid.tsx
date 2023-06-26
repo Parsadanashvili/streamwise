@@ -24,6 +24,9 @@ const MoviesGrid: FC<MoviesGridProps> = ({ type, titles: initialTitles }) => {
       const grid = gridRef.current;
       const { bottom } = grid.getBoundingClientRect();
       const { innerHeight } = window;
+
+      console.log(bottom - 400, innerHeight);
+
       setIsInView((prev) => bottom - 400 <= innerHeight);
     }
   };
