@@ -100,10 +100,10 @@ const TitlePage = async ({ params }: TitlePageProps) => {
                   className="flex-col justify-start items-start gap-1 flex"
                 >
                   <div className="text-white-400 text-xl font-normal leading-normal">
-                    {actor.name.ka}
+                    {actor.name?.ka}
                   </div>
                   <div className="text-white-200 text-xl font-normal leading-normal">
-                    {actor.character.ka}
+                    {actor.character?.ka}
                   </div>
                 </div>
               ))}

@@ -8,7 +8,9 @@ export const getMovies = async (type = "movie") => {
         type,
       },
       {
-        cache: "no-cache",
+        next: {
+          revalidate: 60 * 5,
+        },
       }
     );
   } catch (err) {
@@ -23,7 +25,9 @@ export const getMovies = async (type = "movie") => {
 export const getTitle = async (id: string) => {
   try {
     return await wiseApi.get(`/titles/${id}`, undefined, {
-      cache: "no-cache",
+      next: {
+        revalidate: 60 * 60,
+      },
     });
   } catch (err) {
     return {

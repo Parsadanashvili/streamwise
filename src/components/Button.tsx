@@ -38,6 +38,8 @@ const styles = {
         "hover:border-[rgba(255,255,255,0.15)]",
         "transition-colors",
       ],
+
+      skeleton: ["bg-white-100", "animate-pulse"],
     },
   },
 
@@ -55,6 +57,8 @@ const styles = {
       ],
 
       outline: ["text-white-400"],
+
+      skeleton: ["text-white-100"],
     },
   },
 };
