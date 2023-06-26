@@ -2,12 +2,13 @@ import CircleButton from "./CircleButton";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import { FC } from "react";
 import MoviePoster from "./MoviePoster";
+import { Genre } from "@/types";
 
 interface MovieCardProps {
   title: string;
   short_description: string;
   image: string;
-  genres?: { id: number; name: { ka: string } }[];
+  genres?: Genre[];
   blurhash?: string;
 }
 

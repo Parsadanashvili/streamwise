@@ -7,6 +7,18 @@ const baseUrl = process.env.API_BASE_URL || "";
 
 type Query = Record<string, string>;
 
+export type ApiResponse<T> =
+  | {
+      ok: boolean;
+      status: number;
+      res: T;
+    }
+  | {
+      ok: false;
+      status: null;
+      res: null;
+    };
+
 const get = async (url: string, query?: Query, options?: RequestInit) => {
   const { headers } = options || {};
 

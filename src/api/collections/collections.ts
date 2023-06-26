@@ -1,6 +1,9 @@
-import wiseApi from "../wiseApi";
+import { Collection, Paginated } from "@/types";
+import wiseApi, { ApiResponse } from "../wiseApi";
 
-export const getCollections = async (page = 1) => {
+export const getCollections = async (
+  page = 1
+): Promise<ApiResponse<Paginated<Collection>>> => {
   try {
     return wiseApi.get(
       "/collections",

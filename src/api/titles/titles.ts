@@ -1,11 +1,16 @@
-import wiseApi from "../wiseApi";
+import { Paginated, Title } from "@/types";
+import wiseApi, { ApiResponse } from "../wiseApi";
 
-export const getMovies = async (type = "movie") => {
+export const getTitles = async (
+  type = "movie",
+  page = 1
+): Promise<ApiResponse<Paginated<Title>>> => {
   try {
     return await wiseApi.get(
       "/titles",
       {
         type,
+        page: String(page),
       },
       {
         next: {
