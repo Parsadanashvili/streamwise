@@ -12,6 +12,11 @@ const nextConfig = {
         port: "8000",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "stream-wise-bucket.s3.eu-central-1.amazonaws.com",
+        pathname: "/**",
+      },
     ],
     domains: ["www.figma.com"],
   },
