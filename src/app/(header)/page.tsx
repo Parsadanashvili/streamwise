@@ -1,12 +1,12 @@
 import MovieCard from "@/components/MovieCard";
 import Slider from "./components/Slider";
 import Section from "./components/Section";
-import { getCollections } from "@/api/collections/collections";
+import { getLandingCollections } from "@/api/collections/collections";
 import Link from "next/link";
 import { Collection } from "@/types";
 
 export default async function Home() {
-  const { res, ok } = await getCollections();
+  const { res, ok } = await getLandingCollections();
 
   return (
     <main className="min-h-screen flex flex-col">
