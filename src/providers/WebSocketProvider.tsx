@@ -13,7 +13,7 @@ import WebSocket from "isomorphic-ws";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import Cookies from "js-cookie";
 
-const wsUrl = process.env.WS_BASE_URL ?? "ws://localhost:5656";
+const wsBaseUrl = process.env.WS_BASE_URL;
 const connectionTimeout = 15000;
 
 type Method = string;
@@ -41,11 +41,15 @@ export const WebSocketProvider: FC<WebSocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!conn && !isConnecting.current) {
+      if (!wsBaseUrl) {
+        throw new Error("Websocket Base URL is not defined");
+      }
+
       isConnecting.current = true;
 
       const accessToken = Cookies.get("accessToken");
 
-      const socket = new ReconnectingWebSocket(wsUrl, [], {
+      const socket = new ReconnectingWebSocket(wsBaseUrl, [], {
         connectionTimeout,
         WebSocket,
       });
