@@ -42,16 +42,14 @@ const get = async (url: string, query?: Query, options?: RequestInit) => {
 };
 
 const post = async (url: string, body?: any, options?: RequestInit) => {
-  const { headers } = options || {};
-
   const response = await fetch(`${baseUrl}${url}`, {
     method: "POST",
     body: JSON.stringify(body),
+    ...options,
     headers: {
       ...defaultHeaders,
-      ...headers,
+      ...options?.headers,
     },
-    ...options,
   });
 
   return {

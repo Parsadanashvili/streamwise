@@ -1,12 +1,11 @@
 import { getTitle } from "@/api/titles/titles";
 import { notFound } from "next/navigation";
 import Cover from "./components/Cover";
-import Button from "@/components/Button";
-import { SignalIcon } from "@heroicons/react/24/outline";
-import { PlayIcon } from "@heroicons/react/24/solid";
 import Poster from "./components/Poster";
 import Section from "../../components/Section";
 import MovieCard from "@/components/MovieCard";
+import Action from "./components/Action";
+import { getLanguages } from "@/api/languages/languages";
 
 const movie = {
   title: "სპაიდერმენი: სახლისკენ გზა არ არის",
@@ -36,11 +35,11 @@ const TitlePage = async ({ params }: TitlePageProps) => {
       <Cover covers={title.covers} />
       <div className="w-full absolute -mt-[278px] z-40 text-white px-20 animate-mainSliderInfoFadeUp">
         <div className="flex items-start gap-20">
-          <Poster image={title.posters[0]} alt={title.name.ka} />
+          <Poster image={title.posters?.[0]} alt={title.name.ka} />
 
           <div className="w-full py-14 flex flex-col gap-6 animate-fadeIn">
             <div className="flex items-center gap-3">
-              {title.genres.map((genre: any) => (
+              {title.genres?.map((genre: any) => (
                 <div
                   key={genre.id}
                   className="flex py-2 px-4 items-center justify-center rounded-full bg-[rgba(255,255,255,0.10)] backdrop-blur-[6px]"
@@ -53,38 +52,42 @@ const TitlePage = async ({ params }: TitlePageProps) => {
             </div>
             <div className="flex flex-col flex-start gap-2 w-full">
               <div className="flex items-center gap-3 text-base text-white-400 leading-5 font-normal">
-                <span>{new Date(title.release_date).getFullYear()}</span>
+                {title.release_date && (
+                  <>
+                    <span>{new Date(title.release_date).getFullYear()}</span>
 
-                <span className="text-white-200">•</span>
+                    <span className="text-white-200">•</span>
+                  </>
+                )}
+                {title.duration && (
+                  <>
+                    <span>{(title.duration / 60).toFixed(0)}ს</span>
 
-                <span>{(title.duration / 60).toFixed(0)}ს</span>
-
-                <span className="text-white-200">•</span>
+                    <span className="text-white-200">•</span>
+                  </>
+                )}
 
                 <span>PG13</span>
               </div>
-              <div>
-                <span className="text-white-400 text-base font-normal leading-tight">
-                  რეჟისორი:{" "}
-                </span>
-                <span className="text-white text-base font-normal leading-tight">
-                  {title.directors
-                    .map((director: any) => director.name.ka)
-                    .join(", ")}
-                </span>
-              </div>
+              {title.directors && (
+                <div>
+                  <span className="text-white-400 text-base font-normal leading-tight">
+                    რეჟისორი:{" "}
+                  </span>
+                  <span className="text-white text-base font-normal leading-tight">
+                    {title.directors
+                      .map((director: any) => director.name.ka)
+                      .join(", ")}
+                  </span>
+                </div>
+              )}
               <div className="text-white text-5xl font-bold leading-none case-on uppercase">
                 {title.name.ka}
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Button startIcon={SignalIcon}>უყურეთ ერთად</Button>
-              <Button startIcon={PlayIcon} variant="outline">
-                უყურე ახლავე
-              </Button>
-            </div>
+            <Action title={title} />
             <div className="text-white text-lg font-normal">
-              {title.plots.ka}
+              {title.plots.ka}A
             </div>
           </div>
 
@@ -94,7 +97,7 @@ const TitlePage = async ({ params }: TitlePageProps) => {
             </div>
 
             <div className="flex-col justify-start items-start gap-5 inline-flex mt-7">
-              {title.actors.map((actor: any) => (
+              {title.actors?.map((actor: any) => (
                 <div
                   key={actor.id}
                   className="flex-col justify-start items-start gap-1 flex"

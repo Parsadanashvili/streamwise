@@ -27,7 +27,6 @@ const BrowsePage = async ({ params }: BrowsePageProps) => {
           type={type === "movies" ? "movie" : "series"}
           titles={ok ? res.data : []}
         />
-        <div className="grid grid-cols-6 items-center gap-7"></div>
       </Section>
     </div>
   );

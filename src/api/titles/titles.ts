@@ -27,7 +27,13 @@ export const getTitles = async (
   }
 };
 
-export const getTitle = async (id: string) => {
+export const getTitle = async (
+  id: string
+): Promise<
+  ApiResponse<{
+    data: Title;
+  }>
+> => {
   try {
     return await wiseApi.get(`/titles/${id}`, undefined, {
       next: {

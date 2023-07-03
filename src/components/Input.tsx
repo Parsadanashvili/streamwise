@@ -110,6 +110,16 @@ const Input: FC<InputProps> = forwardRef(
 
     useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
+    useEffect(() => {
+      if (inputRef.current) {
+        if (inputRef.current.value.length) {
+          setIsEntered(() => true);
+        } else {
+          setIsEntered(() => false);
+        }
+      }
+    }, [inputRef]);
+
     const { input: inputStyles, placeholder: placeholderStyles } = useStyles({
       props: {
         color,
@@ -117,14 +127,6 @@ const Input: FC<InputProps> = forwardRef(
       },
       styles: styles as any,
     });
-
-    useEffect(() => {
-      if (value?.toString().length) {
-        setIsEntered(true);
-      } else {
-        setIsEntered(false);
-      }
-    }, [value]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.value.length > 0) {

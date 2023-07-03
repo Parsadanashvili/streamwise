@@ -3,6 +3,7 @@ export type Languagable<T> = {
 };
 
 export interface User {
+  id: string;
   avatar: string;
   username: string;
 }
@@ -53,6 +54,19 @@ export interface Title {
   covers?: Cover;
   featured: boolean;
   imdb_id: string;
+}
+
+export interface WatchRoom {
+  id: number;
+  name: string;
+  language?: Language;
+  title?: Title;
+  episode?: Episode;
+  host: User;
+  participants: User[];
+  starts_at: string | null;
+  started_at: string | null;
+  ended_at: string | null;
 }
 
 export interface Genre {
@@ -107,6 +121,7 @@ export interface Video {
   language: string;
   quality: string;
   duration: number;
+  src: string;
   title?: Title;
   season?: Season;
   episode?: Episode;

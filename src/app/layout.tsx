@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
 import { getMe } from "@/api/auth/auth";
 import { cookies } from "next/headers";
+import { WebSocketProvider } from "@/providers/WebSocketProvider";
 
 export const metadata = {
   title: "Streamwise",
@@ -28,7 +29,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${helvetica.variable} font-sans antialiased bg-black`}>
-        <AuthProvider value={res?.data ?? null}>{children}</AuthProvider>
+        <AuthProvider value={res?.data ?? null}>
+          <WebSocketProvider>{children}</WebSocketProvider>
+        </AuthProvider>
       </body>
     </html>
   );

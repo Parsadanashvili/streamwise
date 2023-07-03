@@ -56,3 +56,48 @@
     ),
     rgba(255, 255, 255, 0.05);
 }
+
+.border-white-gradient {
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.border-white-gradient::before {
+  box-sizing: border-box;
+  content: "";
+  position: absolute;
+  inset: 0px;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  border-radius: inherit;
+  padding: 1px;
+  mask-mode: match-source, match-source;
+  mask-repeat: repeat, repeat;
+  mask-clip: content-box, border-box;
+  mask-origin: content-box, border-box;
+  mask-position: 0% 0%, 0% 0%;
+  mask-size: auto, auto;
+  mask-image: linear-gradient(black, black), linear-gradient(black, black);
+  mask-composite: exclude;
+  /* border-radius: inherit;
+  padding: 1px 1px 1px 1px;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.1)
+  );
+  mask-mode: match-source, match-source;
+  mask-repeat: repeat, repeat;
+  mask-clip: content-box, border-box;
+  mask-origin: content-box, border-box;
+  mask-position: 0% 0%, 0% 0%;
+  mask-size: auto, auto;
+  mask-image: linear-gradient(black, black), linear-gradient(black, black);
+  mask-composite: exclude; */
+}

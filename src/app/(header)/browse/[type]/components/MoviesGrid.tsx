@@ -82,6 +82,14 @@ const MoviesGrid: FC<MoviesGridProps> = ({ type, titles: initialTitles }) => {
           <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
           <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
           <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
+          <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
+          <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
+          <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
+          <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
+          <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
+          <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
+          <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
+          <div className="w-full h-[430px] bg-white-100 rounded-3xl cursor-pointer animate-pulse" />
         </>
       )}
     </div>

@@ -6,7 +6,6 @@ export const getMe = async (accessToken: string) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-      cache: "force-cache",
     });
   } catch (err) {
     return {
