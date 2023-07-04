@@ -18,7 +18,10 @@ import {
 } from "react";
 
 interface PlayerProps {
+  poster?: string;
+  autoPlay?: boolean;
   src: string;
+  onInit?: (player: HTMLVideoElement | null) => void;
 }
 
 const calculateVolume = (
@@ -43,7 +46,7 @@ const ambilight = true;
 const FRAMERATE = 30;
 let ambilightInterval: number | null = null;
 
-const Player: FC<PlayerProps> = ({ src }) => {
+const Player: FC<PlayerProps> = ({ poster, autoPlay, src, onInit }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLVideoElement>(null);
   const ambilightRef = useRef<HTMLCanvasElement>(null);
@@ -150,20 +153,19 @@ const Player: FC<PlayerProps> = ({ src }) => {
   );
 
   useEffect(() => {
-    if (volumeRef.current) {
-      volumeRef.current.addEventListener("mousemove", handleVolumeChange);
-      volumeRef.current.addEventListener("mousedown", toggleScrubbingVolume);
+    const volumeElement = volumeRef.current;
+
+    if (volumeElement) {
+      volumeElement.addEventListener("mousemove", handleVolumeChange);
+      volumeElement.addEventListener("mousedown", toggleScrubbingVolume);
       document.addEventListener("mouseup", handleDocumentMouseUp);
       document.addEventListener("mousemove", handleDocumentMouseMove);
     }
 
     return () => {
-      if (volumeRef.current) {
-        volumeRef.current.removeEventListener("mousemove", handleVolumeChange);
-        volumeRef.current.removeEventListener(
-          "mousedown",
-          toggleScrubbingVolume
-        );
+      if (volumeElement) {
+        volumeElement.removeEventListener("mousemove", handleVolumeChange);
+        volumeElement.removeEventListener("mousedown", toggleScrubbingVolume);
         document.removeEventListener("mouseup", handleDocumentMouseUp);
         document.removeEventListener("mousemove", handleDocumentMouseMove);
       }
@@ -185,6 +187,8 @@ const Player: FC<PlayerProps> = ({ src }) => {
   }, [volume]);
 
   useEffect(() => {
+    const playerElement = playerRef.current;
+
     const onClick = (event: MouseEvent) => {
       const element = event.target as HTMLVideoElement;
 
@@ -207,33 +211,33 @@ const Player: FC<PlayerProps> = ({ src }) => {
       }
     };
 
-    if (playerRef.current) {
-      playerRef.current.addEventListener("click", onClick);
+    if (playerElement) {
+      playerElement.addEventListener("click", onClick);
 
-      playerRef.current.addEventListener("play", () => {
+      playerElement.addEventListener("play", () => {
         setPlaying(true);
       });
 
-      playerRef.current.addEventListener("pause", () => {
+      playerElement.addEventListener("pause", () => {
         setPlaying(false);
       });
 
-      playerRef.current.addEventListener("timeupdate", onTimeUpdate);
+      playerElement.addEventListener("timeupdate", onTimeUpdate);
     }
 
     return () => {
-      if (playerRef.current) {
-        playerRef.current.removeEventListener("click", onClick);
+      if (playerElement) {
+        playerElement.removeEventListener("click", onClick);
 
-        playerRef.current.removeEventListener("play", () => {
+        playerElement.removeEventListener("play", () => {
           setPlaying(true);
         });
 
-        playerRef.current.removeEventListener("pause", () => {
+        playerElement.removeEventListener("pause", () => {
           setPlaying(false);
         });
 
-        playerRef.current.removeEventListener("timeupdate", onTimeUpdate);
+        playerElement.removeEventListener("timeupdate", onTimeUpdate);
       }
     };
   }, [playerRef, play, pause]);
@@ -297,21 +301,23 @@ const Player: FC<PlayerProps> = ({ src }) => {
   }, []);
 
   useEffect(() => {
+    const playerElement = playerRef.current;
+
     if (ambilight) {
       repaintAmbilight();
 
-      playerRef.current?.addEventListener("play", startAmbilight);
-      playerRef.current?.addEventListener("ended", stopAmbilightRepaint);
-      playerRef.current?.addEventListener("seeked", repaintAmbilight);
-      playerRef.current?.addEventListener("load", repaintAmbilight);
+      playerElement?.addEventListener("play", startAmbilight);
+      playerElement?.addEventListener("ended", stopAmbilightRepaint);
+      playerElement?.addEventListener("seeked", repaintAmbilight);
+      playerElement?.addEventListener("load", repaintAmbilight);
     }
 
     return () => {
       if (ambilight) {
-        playerRef.current?.removeEventListener("play", startAmbilight);
-        playerRef.current?.removeEventListener("ended", stopAmbilightRepaint);
-        playerRef.current?.removeEventListener("seeked", repaintAmbilight);
-        playerRef.current?.removeEventListener("load", repaintAmbilight);
+        playerElement?.removeEventListener("play", startAmbilight);
+        playerElement?.removeEventListener("ended", stopAmbilightRepaint);
+        playerElement?.removeEventListener("seeked", repaintAmbilight);
+        playerElement?.removeEventListener("load", repaintAmbilight);
       }
     };
   }, [repaintAmbilight, startAmbilight, stopAmbilightRepaint]);
@@ -358,7 +364,7 @@ const Player: FC<PlayerProps> = ({ src }) => {
         } else {
           if (playerRef.current) {
             playerRef.current.currentTime =
-              (playerRef.current?.duration ?? 0) * precent;
+              (playerRef.current?.duration || 0) * precent;
           }
           play();
         }
@@ -388,11 +394,10 @@ const Player: FC<PlayerProps> = ({ src }) => {
   );
 
   useEffect(() => {
-    timelineContainerRef.current?.addEventListener(
-      "mousemove",
-      handleTimelineUpdate
-    );
-    timelineContainerRef.current?.addEventListener(
+    const timelineContainerElem = timelineContainerRef.current;
+
+    timelineContainerElem?.addEventListener("mousemove", handleTimelineUpdate);
+    timelineContainerElem?.addEventListener(
       "mousedown",
       toggleScrubbingTimeline
     );
@@ -400,11 +405,11 @@ const Player: FC<PlayerProps> = ({ src }) => {
     document.addEventListener("mousemove", handleTimelineMouseMove);
 
     return () => {
-      timelineContainerRef.current?.removeEventListener(
+      timelineContainerElem?.removeEventListener(
         "mousemove",
         handleTimelineUpdate
       );
-      timelineContainerRef.current?.removeEventListener(
+      timelineContainerElem?.removeEventListener(
         "mousedown",
         toggleScrubbingTimeline
       );
@@ -418,10 +423,20 @@ const Player: FC<PlayerProps> = ({ src }) => {
     toggleScrubbingTimeline,
   ]);
 
+  useEffect(() => {
+    if (playerRef.current) {
+      onInit?.(playerRef.current);
+    }
+  }, [onInit]);
+
+  useEffect(() => {
+    setPlaying(autoPlay ?? false);
+  }, [autoPlay]);
+
   return (
     <div className="relative">
       <div
-        className={`relative min-h-[725px] bg-[#000] ${
+        className={`relative w-full bg-[#000] ${
           !fullscren && "rounded-3xl"
         } overflow-hidden group/player-container text-white`}
         ref={containerRef}
@@ -520,6 +535,9 @@ const Player: FC<PlayerProps> = ({ src }) => {
         </div>
 
         <video
+          preload="none"
+          autoPlay={autoPlay}
+          poster={poster}
           ref={playerRef}
           src={src}
           className="w-full h-full object-contain"

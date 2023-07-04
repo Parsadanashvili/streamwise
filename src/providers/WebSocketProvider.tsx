@@ -4,6 +4,7 @@ import {
   FC,
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -17,10 +18,21 @@ const wsBaseUrl = process.env.WS_BASE_URL;
 const connectionTimeout = 15000;
 
 type Method = string;
+type WsEvent = string;
+
+export type ListenerHandler<Data = unknown> = (data: Data) => void;
+export type Listener<Data = unknown> = {
+  event: WsEvent;
+  handler: ListenerHandler<Data>;
+};
 
 interface WsConnection {
   close: () => void;
   send: (method: Method, data: unknown) => void;
+  addListener: <Data = unknown>(
+    event: WsEvent,
+    handler: ListenerHandler<Data>
+  ) => () => void;
 }
 
 type V = WsConnection | null;
@@ -37,7 +49,19 @@ export const WebSocketContext = createContext<{
 
 export const WebSocketProvider: FC<WebSocketProviderProps> = ({ children }) => {
   const [conn, setConn] = useState<V>(null);
+  const listeners = useRef<Listener[]>([]);
   const isConnecting = useRef(false);
+
+  const handleListeners = useCallback(
+    (e: WsEvent, data: unknown) => {
+      listeners.current.forEach((listener) => {
+        if (listener.event === e) {
+          listener.handler(data);
+        }
+      });
+    },
+    [listeners]
+  );
 
   useEffect(() => {
     if (!conn && !isConnecting.current) {
@@ -65,7 +89,7 @@ export const WebSocketProvider: FC<WebSocketProviderProps> = ({ children }) => {
       };
 
       socket.addEventListener("close", (error) => {
-        socket.close();
+        socket.reconnect();
       });
 
       socket.addEventListener("message", (event) => {
@@ -75,9 +99,25 @@ export const WebSocketProvider: FC<WebSocketProviderProps> = ({ children }) => {
           const connection: WsConnection = {
             close: () => socket.close(),
             send,
+            addListener: (event, handler) => {
+              const listener = {
+                event,
+                handler,
+              } as Listener<unknown>;
+
+              listeners.current.push(listener);
+
+              return () =>
+                listeners.current.splice(
+                  listeners.current.indexOf(listener),
+                  1
+                );
+            },
           };
 
           setConn(connection);
+        } else {
+          handleListeners(response.event, response.data);
         }
       });
 
@@ -89,7 +129,7 @@ export const WebSocketProvider: FC<WebSocketProviderProps> = ({ children }) => {
         });
       });
     }
-  }, [conn]);
+  }, [conn, handleListeners]);
 
   return (
     <WebSocketContext.Provider

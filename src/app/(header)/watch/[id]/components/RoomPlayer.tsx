@@ -2,19 +2,25 @@
 
 import Button from "@/components/Button";
 import Player from "@/components/Player";
-import { useAuth } from "@/hooks/useAuth";
-import { WatchRoom } from "@/types";
 import Image from "next/image";
-import { FC, useState } from "react";
+import { FC, useContext } from "react";
+import { WatchContext } from "./WatchProvider";
+import { useAuth } from "@/hooks/useAuth";
+import { useWebSocket } from "@/providers/WebSocketProvider";
+import dayjs from "dayjs";
 
-interface RoomPlayerProps {
-  room: WatchRoom;
-  src: string;
-}
+interface RoomPlayerProps {}
 
-const RoomPlayer: FC<RoomPlayerProps> = ({ room, src: initialSrc }) => {
+const RoomPlayer: FC<RoomPlayerProps> = () => {
   const { user } = useAuth();
-  const [src, setSrc] = useState<string>(initialSrc);
+  const { room, src, setPlayer } = useContext(WatchContext);
+  const { connection } = useWebSocket();
+
+  const start = () => {
+    if (!connection) return;
+
+    connection.send("watchRoom.start", { room_id: room.id });
+  };
 
   if (room.ended_at) {
     return (
@@ -26,7 +32,7 @@ const RoomPlayer: FC<RoomPlayerProps> = ({ room, src: initialSrc }) => {
     );
   }
 
-  if (room.starts_at == null) {
+  if (!room.starts_at && !room.started_at) {
     return (
       <div className="relative flex flex-col items-center justify-center w-full h-[725px] bg-[#000] rounded-3xl select-none overflow-hidden">
         {room.title?.covers?.[0] && (
@@ -34,7 +40,9 @@ const RoomPlayer: FC<RoomPlayerProps> = ({ room, src: initialSrc }) => {
             <div className="absolute top-0 left-0 right-0 bottom-0 bg-black-300 z-10">
               <div className="flex flex-col items-center justify-center w-full h-full">
                 {user && user.id == room.host.id ? (
-                  <Button variant="outline">დაწყება</Button>
+                  <Button variant="outline" onClick={start}>
+                    დაწყება
+                  </Button>
                 ) : (
                   <h1 className="text-2xl font-bold text-white case-on">
                     ფილმი ჯერ არ დაწყებულა
@@ -63,7 +71,7 @@ const RoomPlayer: FC<RoomPlayerProps> = ({ room, src: initialSrc }) => {
     );
   }
 
-  if (room.starts_at && !room.started_at) {
+  if (dayjs(room.starts_at).isAfter(dayjs()) && !room.started_at) {
     return (
       <div className="relative flex flex-col items-center justify-center w-full h-[725px] bg-[#000] rounded-3xl select-none overflow-hidden">
         {room.title?.covers?.[0] && (
@@ -96,7 +104,17 @@ const RoomPlayer: FC<RoomPlayerProps> = ({ room, src: initialSrc }) => {
     );
   }
 
-  return <Player src={src} />;
+  return (
+    <Player
+      poster={room.title?.covers?.[0]}
+      onInit={(p) => {
+        if (p) {
+          setPlayer(p);
+        }
+      }}
+      src={src}
+    />
+  );
 };
 
 export default RoomPlayer;
