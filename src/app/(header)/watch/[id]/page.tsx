@@ -5,6 +5,7 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { getEpisodeVideos } from "@/api/episodes/episodes";
 import WatchProvider from "./components/WatchProvider";
+import { Video } from "@/types";
 
 interface WatchPageProps {
   params: {
@@ -37,6 +38,7 @@ const WatchPage = async ({ params }: WatchPageProps) => {
   }
 
   let src = "";
+  let videos: Video[] = [];
 
   if (title.type === "movie") {
     const { res, ok } = await getTitleVideos(title.id);
@@ -45,10 +47,11 @@ const WatchPage = async ({ params }: WatchPageProps) => {
       notFound();
     }
 
-    src = res.data.filter((video) => video.language === language?.code)[0].src;
-  }
+    videos = res.data;
 
-  if (title.type === "series") {
+    src = res.data.filter((video) => video.language === language?.code)?.[0]
+      ?.src;
+  } else if (title.type === "series") {
     if (!room.episode) {
       notFound();
     }
@@ -59,11 +62,14 @@ const WatchPage = async ({ params }: WatchPageProps) => {
       notFound();
     }
 
-    src = res.data.filter((video) => video.language === language?.code)[0].src;
+    videos = res.data;
+
+    src = res.data.filter((video) => video.language === language?.code)?.[0]
+      ?.src;
   }
 
   return (
-    <WatchProvider room={room} src={src}>
+    <WatchProvider videos={videos} room={room}>
       {title && (
         <div className="flex gap-7">
           <div className="relative min-w-[220px] h-[340px] rounded-3xl overflow-hidden">

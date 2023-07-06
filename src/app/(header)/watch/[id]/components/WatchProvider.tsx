@@ -1,6 +1,6 @@
 "use client";
 
-import { WatchRoom } from "@/types";
+import { Message, Video, WatchRoom } from "@/types";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import {
   FC,
@@ -20,28 +20,32 @@ import Chat from "./Chat";
 
 interface WatchProviderProps {
   room: WatchRoom;
-  src: string;
+  videos: Video[];
   children: ReactNode;
 }
 
 export const WatchContext = createContext<{
   room: WatchRoom;
-  src: string;
+  videos: Video[] | null;
   player: HTMLVideoElement | null;
-  nowWatching: number;
+  messages: Message[];
   setRoom: (room: WatchRoom) => void;
-  setSrc: (src: string) => void;
+  setVideos: (videos: Video[]) => void;
   setPlayer: (player: HTMLVideoElement) => void;
+  setMessages: (messages: Message[]) => void;
+  nowWatching: number;
 }>({
   //@ts-ignore
   room: null,
   //@ts-ignore
-  src: null,
+  videos: null,
   player: null,
-  nowWatching: 0,
+  messages: [],
   setRoom: (u: WatchRoom) => {},
-  setSrc: (u: string) => {},
+  setVideos: (u: Video[]) => {},
   setPlayer: (u: HTMLVideoElement) => {},
+  setMessages: (u: Message[]) => {},
+  nowWatching: 0,
 });
 
 dayjs.locale("ka");
@@ -50,14 +54,68 @@ dayjs.extend(relativeTime);
 const WatchProvider: FC<WatchProviderProps> = ({
   children,
   room: initialRoom,
-  src: initialSrc,
+  videos: initialVideos,
 }) => {
   const [room, setRoom] = useState<WatchRoom>(initialRoom);
-  const [src, setSrc] = useState<string>(initialSrc);
+  const [videos, setVideos] = useState<Video[]>(initialVideos);
   const [player, setPlayer] = useState<HTMLVideoElement | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [nowWatching, setNowWatching] = useState(0);
   const { connection } = useWebSocket();
+
+  useEffect(() => {
+    if (!connection) return;
+
+    connection.send("watchRoom.time", { room_id: room.id });
+
+    return connection.addListener<{
+      id: number;
+      timePassed: number;
+    }>("watch-room-time", (data) => {
+      const onClick = async () => {
+        if (data.id == room.id && player) {
+          try {
+            await player.load();
+
+            if (player.duration > data.timePassed) return;
+
+            player.currentTime = data.timePassed;
+
+            await player.play();
+          } catch (e) {
+            // console.log(e);
+          }
+        }
+
+        document.removeEventListener("click", onClick);
+      };
+
+      document.addEventListener("click", onClick);
+    });
+  }, [connection, room.id, player]);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    connection.send("watchRoom.messages", {
+      room_id: room.id,
+      limit: 30,
+      offset: 0,
+    });
+  }, [connection, room.id]);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    return connection.addListener<{
+      id: number;
+      messages: Message[];
+    }>("watch-room-messages", (data) => {
+      if (data.id == room.id) {
+        setMessages(data.messages);
+      }
+    });
+  }, [connection, room.id]);
 
   useEffect(() => {
     connection?.send("watchRoom.info", { room_id: room.id });
@@ -86,6 +144,17 @@ const WatchProvider: FC<WatchProviderProps> = ({
   }, [connection, room.id]);
 
   useEffect(() => {
+    return connection?.addListener<{
+      id: number;
+      message: Message;
+    }>("watch-room-message", (data) => {
+      if (data.id == room.id) {
+        setMessages((prev) => [...prev, data.message]);
+      }
+    });
+  }, [connection, room.id]);
+
+  useEffect(() => {
     if (!connection) return;
 
     return connection.addListener<{
@@ -99,7 +168,7 @@ const WatchProvider: FC<WatchProviderProps> = ({
         }));
       }
     });
-  }, [connection, room.id, player, setRoom]);
+  }, [connection, room.id]);
 
   useEffect(() => {
     if (room.started_at) {
@@ -122,14 +191,16 @@ const WatchProvider: FC<WatchProviderProps> = ({
       value={useMemo(
         () => ({
           room,
-          src,
+          videos,
           player,
-          nowWatching,
+          messages,
           setRoom,
-          setSrc,
+          setVideos,
           setPlayer,
+          setMessages,
+          nowWatching,
         }),
-        [room, src, player, nowWatching]
+        [room, videos, player, messages, nowWatching]
       )}
     >
       <div className="relative w-full min-h-[calc(100vh-90px)] mt-[90px] flex overflow-hidden">

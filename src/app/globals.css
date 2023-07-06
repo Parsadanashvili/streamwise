@@ -86,18 +86,23 @@
   mask-size: auto, auto;
   mask-image: linear-gradient(black, black), linear-gradient(black, black);
   mask-composite: exclude;
-  /* border-radius: inherit;
-  padding: 1px 1px 1px 1px;
-  background: linear-gradient(
-    rgba(255, 255, 255, 0.6),
-    rgba(255, 255, 255, 0.1)
-  );
-  mask-mode: match-source, match-source;
-  mask-repeat: repeat, repeat;
-  mask-clip: content-box, border-box;
-  mask-origin: content-box, border-box;
-  mask-position: 0% 0%, 0% 0%;
-  mask-size: auto, auto;
-  mask-image: linear-gradient(black, black), linear-gradient(black, black);
-  mask-composite: exclude; */
+}
+
+.chat-scrollbar {
+  scrollbar-width: none;
+  scrollbar-color: rgba(255, 255, 255, 0.2);
+}
+
+.chat-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: rgba(12, 12, 12, 0.2);
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  border: 0px solid rgba(255, 255, 255, 0.2);
 }

@@ -13,7 +13,7 @@ interface RoomPlayerProps {}
 
 const RoomPlayer: FC<RoomPlayerProps> = () => {
   const { user } = useAuth();
-  const { room, src, setPlayer } = useContext(WatchContext);
+  const { room, videos, setPlayer } = useContext(WatchContext);
   const { connection } = useWebSocket();
 
   const start = () => {
@@ -106,13 +106,15 @@ const RoomPlayer: FC<RoomPlayerProps> = () => {
 
   return (
     <Player
+      canChangeTimeline={false}
+      height={725}
       poster={room.title?.covers?.[0]}
       onInit={(p) => {
         if (p) {
           setPlayer(p);
         }
       }}
-      src={src}
+      src={videos?.find((v) => v.language === room.language?.code)?.src ?? ""}
     />
   );
 };

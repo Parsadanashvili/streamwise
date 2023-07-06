@@ -141,5 +141,4 @@ export interface Message {
   id: number;
   content: string;
   user: User | "system";
-  created_at: string;
 }

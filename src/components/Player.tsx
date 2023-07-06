@@ -7,6 +7,7 @@ import {
   PlayIcon,
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/solid";
 import {
   CSSProperties,
@@ -18,9 +19,12 @@ import {
 } from "react";
 
 interface PlayerProps {
+  height?: number;
   poster?: string;
   autoPlay?: boolean;
   src: string;
+  ambilight?: boolean;
+  canChangeTimeline?: boolean;
   onInit?: (player: HTMLVideoElement | null) => void;
 }
 
@@ -42,11 +46,30 @@ const calculateVolume = (
   return volume;
 };
 
+const formatTime = (time: number): string => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time - hours * 3600) / 60);
+  const seconds = Math.floor(time - hours * 3600 - minutes * 60);
+
+  const hoursStr = hours > 0 ? `${hours}:` : "";
+  const minutesStr = `${minutes < 10 ? "0" : ""}${minutes}:`;
+  const secondsStr = `${seconds < 10 ? "0" : ""}${seconds}`;
+
+  return `${hoursStr}${minutesStr}${secondsStr}`;
+};
+
 const ambilight = true;
 const FRAMERATE = 30;
 let ambilightInterval: number | null = null;
 
-const Player: FC<PlayerProps> = ({ poster, autoPlay, src, onInit }) => {
+const Player: FC<PlayerProps> = ({
+  height,
+  poster,
+  autoPlay,
+  src,
+  canChangeTimeline,
+  onInit,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLVideoElement>(null);
   const ambilightRef = useRef<HTMLCanvasElement>(null);
@@ -57,6 +80,8 @@ const Player: FC<PlayerProps> = ({ poster, autoPlay, src, onInit }) => {
   const [playing, setPlaying] = useState(false);
   const [fullscren, setFullscreen] = useState(false);
   const [volume, setVolume] = useState(1);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [scrubbingVolume, setScrubbingVolume] = useState(false);
   const [scrubbingTimeline, setScrubbingTimeline] = useState(false);
 
@@ -325,6 +350,8 @@ const Player: FC<PlayerProps> = ({ poster, autoPlay, src, onInit }) => {
   // Timeline
   const handleTimelineUpdate = useCallback(
     (e: MouseEvent) => {
+      if (!canChangeTimeline) return;
+
       const rect = timelineContainerRef.current?.getBoundingClientRect();
       if (rect) {
         const precent =
@@ -343,11 +370,13 @@ const Player: FC<PlayerProps> = ({ poster, autoPlay, src, onInit }) => {
         }
       }
     },
-    [timelineRef, timelineContainerRef, scrubbingTimeline]
+    [timelineRef, timelineContainerRef, scrubbingTimeline, canChangeTimeline]
   );
 
   const toggleScrubbingTimeline = useCallback(
     (e: MouseEvent) => {
+      if (!canChangeTimeline) return;
+
       const rect = timelineContainerRef.current?.getBoundingClientRect();
       if (rect) {
         const precent =
@@ -372,25 +401,29 @@ const Player: FC<PlayerProps> = ({ poster, autoPlay, src, onInit }) => {
 
       handleTimelineUpdate(e);
     },
-    [handleTimelineUpdate, pause, play]
+    [handleTimelineUpdate, pause, play, canChangeTimeline]
   );
 
   const handleTimelineMouseUp = useCallback(
     (e: MouseEvent) => {
+      if (!canChangeTimeline) return;
+
       if (scrubbingTimeline) {
         toggleScrubbingTimeline(e);
       }
     },
-    [scrubbingTimeline, toggleScrubbingTimeline]
+    [scrubbingTimeline, toggleScrubbingTimeline, canChangeTimeline]
   );
 
   const handleTimelineMouseMove = useCallback(
     (e: MouseEvent) => {
+      if (!canChangeTimeline) return;
+
       if (scrubbingTimeline) {
         handleTimelineUpdate(e);
       }
     },
-    [scrubbingTimeline, handleTimelineUpdate]
+    [scrubbingTimeline, handleTimelineUpdate, canChangeTimeline]
   );
 
   useEffect(() => {
@@ -433,12 +466,41 @@ const Player: FC<PlayerProps> = ({ poster, autoPlay, src, onInit }) => {
     setPlaying(autoPlay ?? false);
   }, [autoPlay]);
 
+  useEffect(() => {
+    const player = playerRef.current;
+
+    if (player) {
+      player.addEventListener("durationchange", () => {
+        setDuration(player?.duration || 0);
+      });
+
+      player.addEventListener("timeupdate", () => {
+        setCurrentTime(player?.currentTime || 0);
+      });
+    }
+
+    return () => {
+      if (player) {
+        player.removeEventListener("durationchange", () => {
+          setDuration(player?.duration || 0);
+        });
+
+        player.addEventListener("timeupdate", () => {
+          setCurrentTime(player?.currentTime || 0);
+        });
+      }
+    };
+  }, [playerRef]);
+
   return (
     <div className="relative">
       <div
         className={`relative w-full bg-[#000] ${
           !fullscren && "rounded-3xl"
         } overflow-hidden group/player-container text-white`}
+        style={{
+          height,
+        }}
         ref={containerRef}
       >
         <div className="invisible opacity-0 absolute bottom-0 left-0 right-0 z-50 bg-[rgba(255,255,255,0.05)] backdrop-blur-[6px] p-4 group-hover/player-container:opacity-100 group-hover/player-container:visible transition-opacity duration-300 ease-in-out">
@@ -520,17 +582,28 @@ const Player: FC<PlayerProps> = ({ poster, autoPlay, src, onInit }) => {
                   </div>
                 </div>
               </div>
+
+              <div className="text-white-400 text-sm select-none">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </div>
             </div>
-            <button
-              className="cursor-pointer outline-0 border-none bg-transparent text-white-400 hover:text-white"
-              onClick={toggleFullscreen}
-            >
-              {fullscren ? (
-                <ArrowsPointingInIcon className="w-6 h-6" />
-              ) : (
-                <ArrowsPointingOutIcon className="w-6 h-6" />
-              )}
-            </button>
+
+            <div className="flex items-center gap-4">
+              <button className="cursor-pointer outline-0 border-none bg-transparent text-white-400 hover:text-white hover:rotate-90 transition-transform duration-300 ease-in-out">
+                <Cog6ToothIcon className="w-6 h-6" />
+              </button>
+
+              <button
+                className="cursor-pointer outline-0 border-none bg-transparent text-white-400 hover:text-white"
+                onClick={toggleFullscreen}
+              >
+                {fullscren ? (
+                  <ArrowsPointingInIcon className="w-6 h-6" />
+                ) : (
+                  <ArrowsPointingOutIcon className="w-6 h-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
