@@ -87,7 +87,7 @@ const TitlePage = async ({ params }: TitlePageProps) => {
             </div>
             <Action title={title} />
             <div className="text-white text-lg font-normal">
-              {title.plots.ka}A
+              {title.plots.ka}
             </div>
           </div>
 
