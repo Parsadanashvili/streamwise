@@ -1,6 +1,6 @@
 "use client";
 
-import { checkUsername } from "@/api/auth/auth";
+import { checkUsername } from "@/api/auth";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import InputStack from "@/components/InputStack";
@@ -60,9 +60,9 @@ const SignupForm = () => {
   useEffect(() => {
     const timeout = setTimeout(async () => {
       if (username.length > 3) {
-        const { res } = await checkUsername(username);
+        const { data } = await checkUsername(username);
 
-        if (!res.data.available) {
+        if (!data.data.available) {
           setError("username", {
             type: "onChange",
             message: "მომხმარებელის სახელი დაკავებულია",

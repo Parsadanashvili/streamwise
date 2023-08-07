@@ -1,3 +1,6 @@
+import requestly from "requestly";
+import { RequestResponse } from "requestly/lib/types";
+
 export const defaultHeaders = {
   "Content-Type": "application/json",
   Accept: "application/json",
@@ -5,63 +8,56 @@ export const defaultHeaders = {
 
 const baseUrl = process.env.API_BASE_URL || "";
 
-type Query = Record<string, string>;
+type Params = Record<string, string>;
 
-export type ApiResponse<T> =
-  | {
-      ok: boolean;
-      status: number;
-      res: T;
-    }
-  | {
-      ok: false;
-      status: null;
-      res: null;
-    };
+export type ApiResponse<T> = RequestResponse<T>;
 
-const get = async (url: string, query?: Query, options?: RequestInit) => {
-  const { headers } = options || {};
+const wiseApi = requestly.create({
+  baseUrl,
+  userAgent: "streamwise-web",
+  headers: {
+    ...defaultHeaders,
+  },
+  storeCookies: false,
+});
 
-  const response = await fetch(
-    `${baseUrl}${url}?` + new URLSearchParams(query),
-    {
-      method: "GET",
-      headers: {
-        ...defaultHeaders,
-        ...headers,
-      },
-      ...options,
-    }
-  );
+// const get = async <T>(
+//   url: string,
+//   params?: Params,
+//   options?: RequestInit
+// ): Promise<ApiResponse<T>> => {
+//   const { headers } = options || {};
 
-  return {
-    ok: response.ok,
-    status: response.status,
-    res: await response.json(),
-  };
-};
+//   const response = await client.get<T>(url, {
+//     params,
+//     ...options,
+//     //@ts-ignore
+//     headers,
+//   });
 
-const post = async (url: string, body?: any, options?: RequestInit) => {
-  const response = await fetch(`${baseUrl}${url}`, {
-    method: "POST",
-    body: JSON.stringify(body),
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options?.headers,
-    },
-  });
+//   return response;
+// };
 
-  return {
-    ok: response.ok,
-    status: response.status,
-    res: await response.json(),
-  };
-};
+// const post = async <T>(
+//   url: string,
+//   body?: any,
+//   options?: RequestInit
+// ): Promise<ApiResponse<T>> => {
+//   const { headers } = options || {};
 
-const wiseApi = {
-  get,
-  post,
-};
+//   const response = await client.post<T>(url, {
+//     body,
+//     //@ts-ignore
+//     headers,
+//     ...options,
+//   });
+
+//   return response;
+// };
+
+// const wiseApi = {
+//   get,
+//   post,
+// };
 
 export default wiseApi;

@@ -63,36 +63,36 @@ const WatchProvider: FC<WatchProviderProps> = ({
   const [nowWatching, setNowWatching] = useState(0);
   const { connection } = useWebSocket();
 
-  useEffect(() => {
-    if (!connection) return;
+  // useEffect(() => {
+  //   if (!connection) return;
 
-    connection.send("watchRoom.time", { room_id: room.id });
+  //   connection.send("watchRoom.time", { room_id: room.id });
 
-    return connection.addListener<{
-      id: number;
-      timePassed: number;
-    }>("watch-room-time", (data) => {
-      const onClick = async () => {
-        if (data.id == room.id && player) {
-          try {
-            await player.load();
+  //   return connection.addListener<{
+  //     id: number;
+  //     timePassed: number;
+  //   }>("watch-room-time", (data) => {
+  //     const onClick = async () => {
+  //       if (data.id == room.id && player) {
+  //         try {
+  //           await player.load();
 
-            if (player.duration > data.timePassed) return;
+  //           if (player.duration > data.timePassed) return;
 
-            player.currentTime = data.timePassed;
+  //           player.currentTime = data.timePassed;
 
-            await player.play();
-          } catch (e) {
-            // console.log(e);
-          }
-        }
+  //           await player.play();
+  //         } catch (e) {
+  //           // console.log(e);
+  //         }
+  //       }
 
-        document.removeEventListener("click", onClick);
-      };
+  //       document.removeEventListener("click", onClick);
+  //     };
 
-      document.addEventListener("click", onClick);
-    });
-  }, [connection, room.id, player]);
+  //     document.addEventListener("click", onClick);
+  //   });
+  // }, [connection, room.id, player]);
 
   useEffect(() => {
     if (!connection) return;
@@ -117,17 +117,17 @@ const WatchProvider: FC<WatchProviderProps> = ({
     });
   }, [connection, room.id]);
 
-  useEffect(() => {
-    connection?.send("watchRoom.info", { room_id: room.id });
+  // useEffect(() => {
+  //   connection?.send("watchRoom.info", { room_id: room.id });
 
-    let interval = setInterval(() => {
-      connection?.send("watchRoom.info", { room_id: room.id });
-    }, 1200 * 10);
+  //   let interval = setInterval(() => {
+  //     connection?.send("watchRoom.info", { room_id: room.id });
+  //   }, 1200 * 10);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [connection, room.id]);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [connection, room.id]);
 
   useEffect(() => {
     if (!connection) return;

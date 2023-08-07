@@ -1,7 +1,5 @@
-import { getTitles } from "@/api/titles/titles";
+import { getTitles } from "@/api/titles";
 import Section from "../../components/Section";
-import MovieCard from "@/components/MovieCard";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import MoviesGrid from "./components/MoviesGrid";
 
@@ -18,14 +16,14 @@ const BrowsePage = async ({ params }: BrowsePageProps) => {
     notFound();
   }
 
-  const { res, ok } = await getTitles(type === "movies" ? "movie" : "series");
+  const { data, ok } = await getTitles(type === "movies" ? "movie" : "series");
 
   return (
     <div className="mt-[120px]">
       <Section title="ფილმები">
         <MoviesGrid
           type={type === "movies" ? "movie" : "series"}
-          titles={ok ? res.data : []}
+          titles={ok ? data.data : []}
         />
       </Section>
     </div>

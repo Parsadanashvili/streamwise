@@ -1,4 +1,4 @@
-import { getCollection } from "@/api/collections/collections";
+import { getCollection } from "@/api/collections";
 import { notFound } from "next/navigation";
 import { type } from "os";
 import MoviesGrid from "../../browse/[type]/components/MoviesGrid";
@@ -14,15 +14,15 @@ interface CollectionPageProps {
 }
 
 const CollectionPage = async ({ params }: CollectionPageProps) => {
-  const { res, ok } = await getCollection(params.slug);
+  const { data, ok } = await getCollection(params.slug);
 
-  const collection = ok && res.data.collection;
+  const collection = ok && data.data.collection;
 
   if (!ok || !collection) {
     notFound();
   }
 
-  const titles = ok ? res.data.titles : null;
+  const titles = ok ? data.data.titles : null;
 
   return (
     <div className="mt-[120px]">

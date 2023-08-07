@@ -11,7 +11,7 @@ import { InformationCircleIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import { FC, useState } from "react";
 import { useForm } from "@/hooks/useForm";
-import { createWatchRoom } from "@/api/watchRoom/watchRoom";
+import { createWatchRoom } from "@/api/watchRoom";
 import Cookies from "js-cookie";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -53,7 +53,7 @@ const Action: FC<ActionProps> = ({ title }) => {
     const at = Cookies.get("accessToken");
     if (!at) return;
 
-    const { res, ok } = await createWatchRoom(
+    const { data: res, ok } = await createWatchRoom(
       at,
       data.name,
       data.language_id,

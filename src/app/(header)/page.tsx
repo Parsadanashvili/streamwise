@@ -1,19 +1,19 @@
 import MovieCard from "@/components/MovieCard";
 import Slider from "./components/Slider";
 import Section from "./components/Section";
-import { getLandingCollections } from "@/api/collections/collections";
+import { getLandingCollections } from "@/api/collections";
 import Link from "next/link";
 import { Collection } from "@/types";
 
 export default async function Home() {
-  const { res, ok } = await getLandingCollections();
+  const { data, ok } = await getLandingCollections();
 
   return (
     <main className="min-h-screen flex flex-col">
       <Slider />
       <div className="relative mt-[-263px] z-50">
         {ok &&
-          res.data.map((collection: Collection) => (
+          data.data.map((collection: Collection) => (
             <Section
               key={collection.id}
               title={collection.name.ka}

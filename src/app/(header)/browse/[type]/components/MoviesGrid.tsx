@@ -3,7 +3,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { Title } from "@/types";
-import { getTitles } from "@/api/titles/titles";
+import { getTitles } from "@/api/titles";
 import MovieCard from "@/components/MovieCard";
 import Link from "next/link";
 
@@ -50,7 +50,7 @@ const MoviesGrid: FC<MoviesGridProps> = ({ type, titles: initialTitles }) => {
     setIsLoading(true);
     setPage((prev) => prev + 1);
 
-    const { res: newTitles, ok } = await getTitles(type, page);
+    const { data: newTitles, ok } = await getTitles(type, page);
     if (ok) {
       setTitles((prevTitles) => [...prevTitles, ...newTitles.data]);
       setIsLoading(false);

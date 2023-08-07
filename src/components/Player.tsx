@@ -23,6 +23,7 @@ interface PlayerProps {
   poster?: string;
   autoPlay?: boolean;
   src: string;
+  volume?: number;
   ambilight?: boolean;
   canChangeTimeline?: boolean;
   onInit?: (player: HTMLVideoElement | null) => void;
@@ -67,6 +68,7 @@ const Player: FC<PlayerProps> = ({
   poster,
   autoPlay,
   src,
+  volume: initialVolume = 1,
   canChangeTimeline,
   onInit,
 }) => {
@@ -79,7 +81,7 @@ const Player: FC<PlayerProps> = ({
 
   const [playing, setPlaying] = useState(false);
   const [fullscren, setFullscreen] = useState(false);
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(initialVolume);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [scrubbingVolume, setScrubbingVolume] = useState(false);

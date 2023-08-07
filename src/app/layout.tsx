@@ -1,7 +1,7 @@
 import { helvetica } from "@/styles/fonts";
 import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
-import { getMe } from "@/api/auth/auth";
+import { getMe } from "@/api/auth";
 import { cookies } from "next/headers";
 import { WebSocketProvider } from "@/providers/WebSocketProvider";
 
@@ -19,17 +19,22 @@ export default async function RootLayout({
   const cookie = cookieStore.get("accessToken");
 
   let accessToken = "";
+  let user = null;
 
   if (cookie) {
     accessToken = cookie.value;
+    try {
+      const { data } = await getMe(accessToken);
+      user = data.data;
+    } catch (e) {
+      // console.log(e);
+    }
   }
-
-  const { res } = await getMe(accessToken);
 
   return (
     <html lang="en">
       <body className={`${helvetica.variable} font-sans antialiased bg-black`}>
-        <AuthProvider value={res?.data ?? null}>
+        <AuthProvider value={user}>
           <WebSocketProvider>{children}</WebSocketProvider>
         </AuthProvider>
       </body>

@@ -1,9 +1,9 @@
-import { getTitleVideos } from "@/api/videos/videos";
-import { getWatchRoom } from "@/api/watchRoom/watchRoom";
+import { getTitleVideos } from "@/api/videos";
+import { getWatchRoom } from "@/api/watchRoom";
 import { cookies } from "next/headers";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
-import { getEpisodeVideos } from "@/api/episodes/episodes";
+import { getEpisodeVideos } from "@/api/episodes";
 import WatchProvider from "./components/WatchProvider";
 import { Video } from "@/types";
 
@@ -24,13 +24,13 @@ const WatchPage = async ({ params }: WatchPageProps) => {
   const accessToken = cookie.value;
   const { id } = params;
 
-  const { res, ok } = await getWatchRoom(accessToken, id);
+  const { data, ok } = await getWatchRoom(accessToken, id);
 
   if (!ok) {
     notFound();
   }
 
-  const room = res.data;
+  const room = data.data;
   const { title, language } = room;
 
   if (!title) {
@@ -41,30 +41,30 @@ const WatchPage = async ({ params }: WatchPageProps) => {
   let videos: Video[] = [];
 
   if (title.type === "movie") {
-    const { res, ok } = await getTitleVideos(title.id);
+    const { data, ok } = await getTitleVideos(title.id);
 
-    if (!ok || res.data.length === 0) {
+    if (!ok || data.data.length === 0) {
       notFound();
     }
 
-    videos = res.data;
+    videos = data.data;
 
-    src = res.data.filter((video) => video.language === language?.code)?.[0]
+    src = data.data.filter((video) => video.language === language?.code)?.[0]
       ?.src;
   } else if (title.type === "series") {
     if (!room.episode) {
       notFound();
     }
 
-    const { res, ok } = await getEpisodeVideos(room.episode.id);
+    const { data, ok } = await getEpisodeVideos(room.episode.id);
 
-    if (!ok || res.data.length === 0) {
+    if (!ok || data.data.length === 0) {
       notFound();
     }
 
-    videos = res.data;
+    videos = data.data;
 
-    src = res.data.filter((video) => video.language === language?.code)?.[0]
+    src = data.data.filter((video) => video.language === language?.code)?.[0]
       ?.src;
   }
 

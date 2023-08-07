@@ -1,11 +1,11 @@
-import { getTitle } from "@/api/titles/titles";
+import { getTitle } from "@/api/titles";
 import { notFound } from "next/navigation";
 import Cover from "./components/Cover";
 import Poster from "./components/Poster";
 import Section from "../../components/Section";
 import MovieCard from "@/components/MovieCard";
 import Action from "./components/Action";
-import { getLanguages } from "@/api/languages/languages";
+import { getLanguages } from "@/api/languages";
 
 const movie = {
   title: "სპაიდერმენი: სახლისკენ გზა არ არის",
@@ -22,13 +22,13 @@ interface TitlePageProps {
 }
 
 const TitlePage = async ({ params }: TitlePageProps) => {
-  const { res, ok } = await getTitle(params.id);
+  const { data, ok } = await getTitle(params.id);
 
   if (!ok) {
     notFound();
   }
 
-  const title = res.data;
+  const title = data.data;
 
   return (
     <div className="w-full min-h-screen">

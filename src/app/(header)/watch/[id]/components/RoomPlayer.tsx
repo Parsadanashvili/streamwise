@@ -114,6 +114,8 @@ const RoomPlayer: FC<RoomPlayerProps> = () => {
           setPlayer(p);
         }
       }}
+      autoPlay={true}
+      volume={0}
       src={videos?.find((v) => v.language === room.language?.code)?.src ?? ""}
     />
   );

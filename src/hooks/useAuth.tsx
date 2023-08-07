@@ -1,7 +1,7 @@
 "use client";
 
 import Cookies from "js-cookie";
-import { getMe } from "@/api/auth/auth";
+import { getMe } from "@/api/auth";
 import wiseApi from "@/api/wiseApi";
 import { User } from "@/types";
 import {
@@ -57,18 +57,29 @@ export const AuthProvider: FC<AuthProviderProps> = ({ value, children }) => {
       if (token) {
         setIsLoading(true);
 
-        const { res } = await getMe(token);
+        const { ok, data } = await getMe(token);
 
         setIsLoading(false);
 
-        setUser(res.data);
+        if (!ok) {
+          setUser(null);
+          Cookies.remove("accessToken");
+          return;
+        }
 
+        setUser(data.data);
         return;
       }
 
       setUser(null);
     };
   }, []);
+
+  useEffect(() => {
+    if (!hasInitialUser) {
+      Cookies.remove("accessToken");
+    }
+  }, [hasInitialUser]);
 
   const v = useMemo(() => {
     return {
@@ -102,13 +113,21 @@ export const login = async ({
   redirectTo?: string;
 }) => {
   try {
-    const { res, ok } = await wiseApi.post("/auth/token", credentials);
+    const { data, ok } = await wiseApi.post<{
+      data: {
+        token: string;
+        token_type: string;
+        expires_in: number;
+      };
+    }>("/auth/token", {
+      body: credentials,
+    });
 
     if (!ok) {
-      throw new Error(res.error);
+      throw new Error("Something went wrong.");
     }
 
-    Cookies.set("accessToken", res.data.token);
+    Cookies.set("accessToken", data.data.token);
 
     await _AUTH_._getSession();
 
@@ -131,10 +150,18 @@ export const signup = async (data: {
   password: string;
 }) => {
   try {
-    const { res, ok } = await wiseApi.post("/auth/signup", data);
+    const { data: res, ok } = await wiseApi.post<{
+      data: {
+        token: string;
+        token_type: string;
+        expires_in: number;
+      };
+    }>("/auth/signup", {
+      body: data,
+    });
 
     if (!ok) {
-      throw res.errors;
+      throw new Error("Something went wrong.");
     }
 
     Cookies.set("accessToken", res.data.token);
