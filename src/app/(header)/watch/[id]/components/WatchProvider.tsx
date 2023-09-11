@@ -63,45 +63,14 @@ const WatchProvider: FC<WatchProviderProps> = ({
   const [nowWatching, setNowWatching] = useState(0);
   const { connection } = useWebSocket();
 
-  // useEffect(() => {
-  //   if (!connection) return;
-
-  //   connection.send("watchRoom.time", { room_id: room.id });
-
-  //   return connection.addListener<{
-  //     id: number;
-  //     timePassed: number;
-  //   }>("watch-room-time", (data) => {
-  //     const onClick = async () => {
-  //       if (data.id == room.id && player) {
-  //         try {
-  //           await player.load();
-
-  //           if (player.duration > data.timePassed) return;
-
-  //           player.currentTime = data.timePassed;
-
-  //           await player.play();
-  //         } catch (e) {
-  //           // console.log(e);
-  //         }
-  //       }
-
-  //       document.removeEventListener("click", onClick);
-  //     };
-
-  //     document.addEventListener("click", onClick);
-  //   });
-  // }, [connection, room.id, player]);
-
   useEffect(() => {
     if (!connection) return;
 
-    connection.send("watchRoom.messages", {
-      room_id: room.id,
-      limit: 30,
-      offset: 0,
-    });
+    connection.send("watchRoom.join", { room_id: room.id });
+
+    return () => {
+      connection.send("watchRoom.leave", { room_id: room.id });
+    };
   }, [connection, room.id]);
 
   useEffect(() => {
@@ -110,38 +79,66 @@ const WatchProvider: FC<WatchProviderProps> = ({
     return connection.addListener<{
       id: number;
       messages: Message[];
-    }>("watch-room-messages", (data) => {
+      nowWatching: number;
+      timePassed: number;
+    }>("watch-room-initData", async (data) => {
       if (data.id == room.id) {
         setMessages(data.messages);
+        setNowWatching(data.nowWatching);
+
+        if (player) {
+          if (player.duration > data.timePassed) return;
+
+          player.currentTime = data.timePassed;
+
+          try {
+            await player.play();
+          } catch {
+            player.volume = 0;
+            await player.play();
+
+            const onClick = (e: Event) => {
+              e.preventDefault();
+
+              player.volume = 1;
+              player.play();
+              document.removeEventListener("click", onClick);
+            };
+
+            document.addEventListener("click", onClick);
+          }
+        }
       }
     });
-  }, [connection, room.id]);
-
-  // useEffect(() => {
-  //   connection?.send("watchRoom.info", { room_id: room.id });
-
-  //   let interval = setInterval(() => {
-  //     connection?.send("watchRoom.info", { room_id: room.id });
-  //   }, 1200 * 10);
-
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [connection, room.id]);
+  }, [room.id, connection, player]);
 
   useEffect(() => {
     if (!connection) return;
 
     return connection.addListener<{
       id: number;
-      name: string;
+      messages: Message[];
       nowWatching: number;
-    }>("watch-room-updated", (data) => {
+      timePassed: number;
+    }>("watch-room-updated", async (data) => {
       if (data.id == room.id) {
         setNowWatching(data.nowWatching);
       }
     });
-  }, [connection, room.id]);
+  }, [room.id, connection, player]);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    return connection.addListener<{
+      id: number;
+      started_at: string;
+    }>("watch-room-started", async (data) => {
+      if (data.id == room.id) {
+        setRoom((r) => ({ ...r, started_at: data.started_at }));
+      }
+    });
+  }, [room.id, connection, player]);
 
   useEffect(() => {
     return connection?.addListener<{
@@ -155,34 +152,15 @@ const WatchProvider: FC<WatchProviderProps> = ({
   }, [connection, room.id]);
 
   useEffect(() => {
-    if (!connection) return;
-
-    return connection.addListener<{
-      id: number;
-      started_at: string;
-    }>("watch-room-started", (data) => {
-      if (data.id == room.id) {
-        setRoom((prev: WatchRoom) => ({
-          ...prev,
-          started_at: data.started_at,
-        }));
-      }
-    });
-  }, [connection, room.id]);
-
-  useEffect(() => {
-    if (room.started_at) {
-      if (player) {
-        if (player.paused) {
-          try {
-            async () => {
-              await player.play();
-            };
-          } catch (e) {
-            // ignore
-          }
+    if (room.started_at && player) {
+      async () => {
+        try {
+          await player.play();
+        } catch (e) {
+          player.volume = 0;
+          await player.play();
         }
-      }
+      };
     }
   }, [room.started_at, player]);
 

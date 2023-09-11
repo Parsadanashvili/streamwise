@@ -18,6 +18,14 @@ import {
   useState,
 } from "react";
 
+// type Src = {
+//   name?: string | null;
+//   src: string;
+//   type: string | null;
+//   language: string;
+//   quality: string;
+// }
+
 interface PlayerProps {
   height?: number;
   poster?: string;
@@ -479,6 +487,10 @@ const Player: FC<PlayerProps> = ({
       player.addEventListener("timeupdate", () => {
         setCurrentTime(player?.currentTime || 0);
       });
+
+      player.addEventListener("volumechange", () => {
+        console.log(player?.volume);
+      });
     }
 
     return () => {
@@ -596,7 +608,9 @@ const Player: FC<PlayerProps> = ({
               </button>
 
               <button
-                className="cursor-pointer outline-0 border-none bg-transparent text-white-400 hover:text-white"
+                className={`cursor-pointer outline-0 border-none bg-transparent text-white-400 hover:text-white ${
+                  fullscren ? "hover:scale-75" : "hover:scale-125"
+                }  transition-transform duration-300 ease-in-out`}
                 onClick={toggleFullscreen}
               >
                 {fullscren ? (

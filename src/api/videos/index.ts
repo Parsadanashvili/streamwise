@@ -1,5 +1,5 @@
 import { Video } from "@/types";
-import wiseApi, { ApiResponse } from "../wiseApi";
+import wiseApi from "../wiseApi";
 
 export const getTitleVideos = async (id: number) =>
   wiseApi.get<{

@@ -126,8 +126,8 @@ const SignupForm = () => {
             })}
             color={!!errors.password?.message ? "error" : undefined}
             error={
-              errors?.username?.message ??
-              errors?.email?.message ??
+              errors?.username?.message ||
+              errors?.email?.message ||
               errors.password?.message
             }
           />

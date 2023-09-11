@@ -65,6 +65,8 @@ export const WebSocketProvider: FC<WebSocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!conn && !isConnecting.current) {
+      console.log("Connecting to websocket");
+
       if (!wsBaseUrl) {
         throw new Error("Websocket Base URL is not defined");
       }
@@ -89,33 +91,14 @@ export const WebSocketProvider: FC<WebSocketProviderProps> = ({ children }) => {
       };
 
       socket.addEventListener("close", (error) => {
-        socket.reconnect();
+        // handle close
       });
 
       socket.addEventListener("message", (event) => {
         const response = JSON.parse(event.data);
 
         if (response.message === "loggedIn") {
-          const connection: WsConnection = {
-            close: () => socket.close(),
-            send,
-            addListener: (event, handler) => {
-              const listener = {
-                event,
-                handler,
-              } as Listener<unknown>;
-
-              listeners.current.push(listener);
-
-              return () =>
-                listeners.current.splice(
-                  listeners.current.indexOf(listener),
-                  1
-                );
-            },
-          };
-
-          setConn(connection);
+          handleListeners("loggedIn", {});
         } else {
           handleListeners(response.event, response.data);
         }
@@ -123,6 +106,24 @@ export const WebSocketProvider: FC<WebSocketProviderProps> = ({ children }) => {
 
       socket.addEventListener("open", () => {
         isConnecting.current = false;
+
+        const connection: WsConnection = {
+          close: () => socket.close(),
+          send,
+          addListener: (event, handler) => {
+            const listener = {
+              event,
+              handler,
+            } as Listener<unknown>;
+
+            listeners.current.push(listener);
+
+            return () =>
+              listeners.current.splice(listeners.current.indexOf(listener), 1);
+          },
+        };
+
+        setConn(connection);
 
         send("auth.token", {
           accessToken,

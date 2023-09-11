@@ -124,7 +124,8 @@ export const login = async ({
     });
 
     if (!ok) {
-      throw new Error("Something went wrong.");
+      //@ts-ignore
+      throw new Error(data.error);
     }
 
     Cookies.set("accessToken", data.data.token);
@@ -161,7 +162,8 @@ export const signup = async (data: {
     });
 
     if (!ok) {
-      throw new Error("Something went wrong.");
+      //@ts-ignore
+      throw new Error(res.error);
     }
 
     Cookies.set("accessToken", res.data.token);

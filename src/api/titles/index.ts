@@ -1,5 +1,5 @@
 import { Paginated, Title } from "@/types";
-import wiseApi, { ApiResponse } from "../wiseApi";
+import wiseApi from "../wiseApi";
 
 export const getTitles = async (type = "movie", page = 1) =>
   wiseApi.get<Paginated<Title>>("/titles", {

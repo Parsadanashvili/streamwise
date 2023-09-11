@@ -8,8 +8,13 @@ import { WatchContext } from "./WatchProvider";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocket } from "@/providers/WebSocketProvider";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ka";
 
 interface RoomPlayerProps {}
+
+dayjs.locale("ka");
+dayjs.extend(relativeTime);
 
 const RoomPlayer: FC<RoomPlayerProps> = () => {
   const { user } = useAuth();
@@ -114,8 +119,6 @@ const RoomPlayer: FC<RoomPlayerProps> = () => {
           setPlayer(p);
         }
       }}
-      autoPlay={true}
-      volume={0}
       src={videos?.find((v) => v.language === room.language?.code)?.src ?? ""}
     />
   );

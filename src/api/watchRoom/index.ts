@@ -1,5 +1,5 @@
 import { WatchRoom } from "@/types";
-import wiseApi, { ApiResponse } from "../wiseApi";
+import wiseApi from "../wiseApi";
 
 export const createWatchRoom = async (
   accessToken: string,
